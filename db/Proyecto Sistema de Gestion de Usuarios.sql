@@ -1,0 +1,1 @@
+SELECT * FROM `proyecto sistema de gestion de usuarios`.usuarios;
