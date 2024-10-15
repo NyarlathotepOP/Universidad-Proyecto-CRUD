@@ -18,7 +18,7 @@ def conectar_db():
         print(f"Error al conectar a la base de datos: {e}")
         return None
 
-def validar_credenciales(nombre_usuario, contraseña):
+def obtener_credenciales(nombre_usuario, contraseña):
     connection = conectar_db()
     if connection:
         try:
@@ -29,10 +29,8 @@ def validar_credenciales(nombre_usuario, contraseña):
             
             if result:
                 contraseña_en_db = result[0]
-
-                contraseña_hash = hashlib.sha256(contraseña.encode()).hexdigest()
                 
-                if contraseña_hash == contraseña_en_db:
+                if contraseña == contraseña_en_db:
                     print("Inicio de sesión exitoso")
                     return True
                 else:
@@ -44,6 +42,49 @@ def validar_credenciales(nombre_usuario, contraseña):
         except Error as e:
             print(f"Error al validar las credenciales: {e}")
             return False
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+
+def obtener_correo(nombre_usuario):
+    connection = conectar_db()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            query = "SELECT email FROM usuarios WHERE nombre_usuario = %s AND estado = 1"
+            cursor.execute(query, (nombre_usuario,))
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                print("Usuario no encontrado o inactivo")
+                return None
+        except Error as e:
+            print(f"Error al obtener el correo: {e}")
+            return None
+        finally:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+
+def obtener_contrasena_usuario(nombre_usuario):
+    connection = conectar_db()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            query = "SELECT contraseña FROM usuarios WHERE nombre_usuario = %s AND estado = 1"
+            cursor.execute(query, (nombre_usuario,))
+            result = cursor.fetchone()
+            
+            if result:
+                return result[0]
+            else:
+                print("Usuario no encontrado o inactivo")
+                return None
+        except Error as e:
+            print(f"Error al obtener la contraseña: {e}")
+            return None
         finally:
             if connection.is_connected():
                 cursor.close()
