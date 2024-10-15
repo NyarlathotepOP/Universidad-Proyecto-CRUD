@@ -7,13 +7,13 @@ from menu_principal import cargar_menu_principal
 
 def login_principal():
     window = tk.Tk()
-    window.title("sistemas de Gestion de Usuarios")
+    window.title("Inicio Sesion")
 
-    window.geometry("400x500")
+    window.geometry("500x500")
     window.configure(bg="lightblue")
 
     img = Image.open("img/inicio.png")
-    img = img.resize((150, 150), Image.Resampling.LANCZOS)
+    img = img.resize((200, 200), Image.Resampling.LANCZOS)
     img = ImageTk.PhotoImage(img)
 
     label_img = tk.Label(window, image=img, bg="lightblue")
