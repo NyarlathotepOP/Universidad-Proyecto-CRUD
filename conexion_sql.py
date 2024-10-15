@@ -1,14 +1,15 @@
 import mysql.connector
 from mysql.connector import Error
 import hashlib
+from config import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 def conectar_db():
     try:
         connection = mysql.connector.connect(
-            host='127.0.0.1',
-            port=3306,
-            database='Proyecto Sistema de Gestion de Usuarios',
-            user='root',
-            password='admin123'
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
         )
         if connection.is_connected():
             print("Conectado a la base de datos")

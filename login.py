@@ -52,12 +52,12 @@ def recuperar_contrasena(usuario):
         messagebox.showerror("Error", "Por favor, ingresa tu nombre de usuario")
     else:
         # consulta a la base de datos para obtener el correo
-        email_cliente = "cliente@ejemplo.com"  # Email de ejemplo
+        email = "cliente@ejemplo.com"  # Email de ejemplo
 
         # Enviar el correo
         try:
-            enviar_correo(email_cliente)
-            messagebox.showinfo("Éxito", f"Correo enviado a {email_cliente}")
+            enviar_correo(email)
+            messagebox.showinfo("Éxito", f"Correo enviado a {email}")
         except:
             messagebox.showerror("Error", "No se pudo enviar el correo. Intenta más tarde.")
 
