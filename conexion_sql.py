@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
-import hashlib
 from config import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
+
 def conectar_db():
     try:
         connection = mysql.connector.connect(
