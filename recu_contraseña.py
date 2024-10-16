@@ -6,23 +6,25 @@ from config import EMAIL_ENV, EMAIL_PASS
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def recuperar_contrasena(usuario_o_correo):
-    if usuario_o_correo == "":
-        messagebox.showwarning("Advertencia", "Por favor, ingresa tu nombre de usuario o correo electrónico")
+def recuperar_contrasena(user_or_email):
+    user_or_email = user_or_email.strip()
+    if user_or_email == "":
+        messagebox.showwarning("Por favor, ingresa tu nombre de usuario o correo")
     else:
-        email = obtener_correo(usuario_o_correo)
-        if email:
-            contrasena = obtener_contrasena_usuario(usuario_o_correo)
+        resultado = obtener_correo(user_or_email)
+        if resultado:
+            email, nombre_usuario = resultado
+            contrasena = obtener_contrasena_usuario(nombre_usuario)
             if contrasena:
                 try:
-                    enviar_correo(email, usuario_o_correo, contrasena)
+                    enviar_correo(email, nombre_usuario, contrasena)
                     messagebox.showinfo("Éxito", f"Correo enviado a {email}")
                 except Exception as e:
                     messagebox.showerror("Error", f"No se pudo enviar el correo: {e}")
             else:
-                messagebox.showerror("Error", "No se pudo recuperar la contraseña del usuario")
+                print("No se pudo recuperar la contraseña del usuario")
         else:
-            messagebox.showerror("Error", "Usuario o correo no encontrado")
+            messagebox.showerror("Usuario o correo no encontrado o inactivo")
 
 def enviar_correo(destinatario, nombre_usuario, contrasena):
     remitente = EMAIL_ENV
@@ -33,7 +35,7 @@ def enviar_correo(destinatario, nombre_usuario, contrasena):
     mensaje['To'] = destinatario
     mensaje['Subject'] = "Recuperación de contraseña"
 
-    body = f"Hola {nombre_usuario},\n\nTu nombre de usuario es: {nombre_usuario}\nTu contraseña es: {contrasena}\n\nPor favor, cambia tu contraseña después de iniciar sesión."
+    body = f"Hola {nombre_usuario},\n\nTu usuario es: {nombre_usuario}\nTu contraseña es: {contrasena}\n\nPor favor, cambia tu contraseña después de iniciar sesión."
     mensaje.attach(MIMEText(body, 'plain'))
 
     try:
