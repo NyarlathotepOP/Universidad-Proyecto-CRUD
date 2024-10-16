@@ -13,11 +13,11 @@ def recuperar_contrasena(user_or_email):
     else:
         resultado = obtener_correo(user_or_email)
         if resultado:
-            email, nombre_usuario = resultado
+            email, nombre_usuario, nombres, apellidos = resultado
             contrasena = obtener_contrasena_usuario(nombre_usuario)
             if contrasena:
                 try:
-                    enviar_correo(email, nombre_usuario, contrasena)
+                    enviar_correo(email, nombre_usuario, nombres, apellidos, contrasena)
                     messagebox.showinfo("Éxito", f"Correo enviado a {email}")
                 except Exception as e:
                     messagebox.showerror("Error", f"No se pudo enviar el correo: {e}")
@@ -26,7 +26,7 @@ def recuperar_contrasena(user_or_email):
         else:
             messagebox.showerror("Usuario o correo no encontrado o inactivo")
 
-def enviar_correo(destinatario, nombre_usuario, contrasena):
+def enviar_correo(destinatario, nombre_usuario, nombres, apellidos, contrasena):
     remitente = EMAIL_ENV
     contraseña = EMAIL_PASS
 
@@ -35,7 +35,7 @@ def enviar_correo(destinatario, nombre_usuario, contrasena):
     mensaje['To'] = destinatario
     mensaje['Subject'] = "Recuperación de contraseña"
 
-    body = f"Hola {nombre_usuario},\n\nTu usuario es: {nombre_usuario}\nTu contraseña es: {contrasena}\n\nPor favor, cambia tu contraseña después de iniciar sesión."
+    body = f"Hola {nombres} {apellidos},\n\nTu usuario es: {nombre_usuario}\nTu contraseña es: {contrasena}\n\nPor favor, cambia tu contraseña después de iniciar sesión."
     mensaje.attach(MIMEText(body, 'plain'))
 
     try:
