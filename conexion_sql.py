@@ -51,7 +51,7 @@ def obtener_correo(user_or_email):
             with connection.cursor() as cursor:
                 try:
                     query = """
-                    SELECT email, nombre_usuario FROM usuarios 
+                    SELECT email, nombre_usuario, nombres, apellidos FROM usuarios 
                     WHERE (LOWER(nombre_usuario) = LOWER(%s) OR LOWER(email) = LOWER(%s)) 
                     AND estado = 1
                     """
