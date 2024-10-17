@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from conexion_sql import obtener_correo, obtener_contrasena_usuario
+from conexion_sql import obtener_correo, obtener_contrasena_usuario, obtener_credenciales, actualizar_contraseña
 import smtplib
 from config import EMAIL_ENV, EMAIL_PASS
 from email.mime.text import MIMEText

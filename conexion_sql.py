@@ -88,3 +88,21 @@ def obtener_contrasena_usuario(nombre_usuario):
                 except Error as e:
                     print(f"Error al obtener la contraseña: {e}")
                     return None
+
+def actualizar_contraseña(nombre_usuario, nueva_contraseña):
+    connection = conectar_db()
+    if connection:
+        with closing(connection):
+            with connection.cursor() as cursor:
+                try:
+                    query = """
+                    UPDATE usuarios SET contraseña = %s 
+                    WHERE nombre_usuario = %s 
+                    AND estado = 1
+                    """
+                    cursor.execute(query, (nueva_contraseña, nombre_usuario))
+                    connection.commit()
+                    return True
+                except Error as e:
+                    print(f"Error al actualizar la contraseña: {e}")
+                    return False

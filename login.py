@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from recu_contraseña import recuperar_contrasena
-from conexion_sql import obtener_credenciales
+from conexion_sql import obtener_credenciales, actualizar_contraseña
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -69,19 +69,80 @@ def cargar_menu_principal():
 
     btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
     btn_salir.pack(pady=10)
+    
+    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
+    btn_cambiar_contraseña.pack(pady=10)
 
+def ventana_cambiar_contraseña():
+    limpiar_ventana()
+    window.title("Cambiar Contraseña")
+
+    label_instruccion = tk.Label(window, text="Ingresa tu contraseña actual y la nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_instruccion.pack(pady=5)
+
+    label_actual = tk.Label(window, text="Contraseña actual", bg="lightblue", font=("Arial", 12))
+    label_actual.pack(pady=5)
+    entry_actual = tk.Entry(window, width=30, show="*")
+    entry_actual.pack()
+
+    label_nueva = tk.Label(window, text="Nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_nueva.pack(pady=5)
+    entry_nueva = tk.Entry(window, width=30, show="*")
+    entry_nueva.pack()
+
+    label_confirmar = tk.Label(window, text="Confirmar nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_confirmar.pack(pady=5)
+    entry_confirmar = tk.Entry(window, width=30, show="*")
+    entry_confirmar.pack()
+
+    btn_actualizar = tk.Button(window, text="Actualizar Contraseña", width=15, command=lambda: cambiar_contraseña(entry_actual.get(), entry_nueva.get(), entry_confirmar.get()))
+    btn_actualizar.pack(pady=20)
+
+    btn_atras = tk.Button(window, text="Atrás", width=10, command=cargar_menu_principal)
+    btn_atras.pack(pady=10)
+
+def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contraseña):
+    nombre_usuario = obtener_usuario_actual()
+
+    if not contraseña_actual or not nueva_contraseña or not confirmar_contraseña:
+        messagebox.showwarning("Por favor, completa todos los campos.")
+        return
+
+    if nueva_contraseña != confirmar_contraseña:
+        messagebox.showerror("La nueva contraseña y la confirmación no coinciden.")
+        return
+
+    if len(nueva_contraseña) < 6:
+        messagebox.showerror("La contraseña debe tener al menos 6 caracteres.")
+        return
+
+    if obtener_credenciales(nombre_usuario, contraseña_actual):
+        if actualizar_contraseña(nombre_usuario, nueva_contraseña):
+            messagebox.showinfo("Éxito", "Contraseña actualizada correctamente.")
+            cargar_menu_principal()
+        else:
+            messagebox.showerror("Error", "Hubo un problema al actualizar la contraseña.")
+    else:
+        messagebox.showerror("Error", "La contraseña actual es incorrecta.")
+
+usuario_actual = None
 def iniciar_sesion(nombre_usuario, contraseña):
+    global usuario_actual
 
     if not nombre_usuario or not contraseña:
         messagebox.showwarning("Advertencia", "Por favor, ingresa un usuario y contraseña válidos")
         return
 
     if obtener_credenciales(nombre_usuario, contraseña):
+        usuario_actual = nombre_usuario
         print("Inicio de sesión exitoso, cargando el menú principal...")
         cargar_menu_principal()
     else:
         print("Credenciales incorrectas o usuario inactivo")
-        messagebox.showerror("Error", "Credenciales incorrectas o usuario inactivo")
+        messagebox.showerror("Credenciales incorrectas o usuario inactivo")
+
+def obtener_usuario_actual():
+    return usuario_actual
 
 if __name__ == "__main__":
     window = tk.Tk()
