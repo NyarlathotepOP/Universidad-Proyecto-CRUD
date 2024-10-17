@@ -118,24 +118,23 @@ def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contras
 
     if obtener_credenciales(nombre_usuario, contraseña_actual):
         if actualizar_contraseña(nombre_usuario, nueva_contraseña):
-            messagebox.showinfo("Éxito", "Contraseña actualizada correctamente.")
+            messagebox.showinfo("Contraseña actualizada correctamente.")
             cargar_menu_principal()
         else:
-            messagebox.showerror("Error", "Hubo un problema al actualizar la contraseña.")
+            messagebox.showerror("Hubo un problema al actualizar la contraseña.")
     else:
-        messagebox.showerror("Error", "La contraseña actual es incorrecta.")
+        messagebox.showerror("La contraseña actual es incorrecta.")
 
 usuario_actual = None
 def iniciar_sesion(nombre_usuario, contraseña):
     global usuario_actual
 
     if not nombre_usuario or not contraseña:
-        messagebox.showwarning("Advertencia", "Por favor, ingresa un usuario y contraseña válidos")
+        messagebox.showwarning("Por favor, ingresa un usuario y contraseña válidos")
         return
 
     if obtener_credenciales(nombre_usuario, contraseña):
         usuario_actual = nombre_usuario
-        print("Inicio de sesión exitoso, cargando el menú principal...")
         cargar_menu_principal()
     else:
         print("Credenciales incorrectas o usuario inactivo")
