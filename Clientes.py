@@ -100,3 +100,18 @@ def mostrar_clientes(tree):
                         tree.insert("", tk.END, values=row)
             except Error as e:
                 messagebox.showerror(f"No se pudo obtener la lista de clientes: {e}")
+
+def seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono):
+    selected_item = tree.focus()
+    if selected_item:
+        cliente = tree.item(selected_item, 'values')
+        entry_cedula.delete(0, tk.END)
+        entry_cedula.insert(0, cliente[0])
+        entry_nombre.delete(0, tk.END)
+        entry_nombre.insert(0, cliente[1])
+        entry_apellido.delete(0, tk.END)
+        entry_apellido.insert(0, cliente[2])
+        entry_direccion.delete(0, tk.END)
+        entry_direccion.insert(0, cliente[3])
+        entry_telefono.delete(0, tk.END)
+        entry_telefono.insert(0, cliente[4])

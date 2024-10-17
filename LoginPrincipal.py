@@ -3,7 +3,7 @@ from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 from Pass_Management import recuperar_contrasena
 from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña
-from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente
+from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -123,6 +123,8 @@ def ventana_gestion_clientes():
     tree.heading('Direccion', text='Direccion')
     tree.heading('Telefono', text='Telefono')
     tree.pack(pady=10)
+
+    tree.bind("<<TreeviewSelect>>", lambda event: seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
 
     mostrar_clientes(tree)
 
