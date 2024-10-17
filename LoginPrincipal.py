@@ -1,8 +1,9 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
-from recu_contraseña import recuperar_contrasena
-from conexion_sql import obtener_credenciales, actualizar_contraseña
+from Pass_Management import recuperar_contrasena
+from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña
+from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -13,7 +14,7 @@ def login_principal():
     window.title("Inicio Sesion")
 
     img = Image.open("img/inicio.png")
-    img = img.resize((200, 200), Image.Resampling.LANCZOS)
+    img = img.resize((300, 300), Image.Resampling.LANCZOS)
     img = ImageTk.PhotoImage(img)
 
     label_img = tk.Label(window, image=img, bg="lightblue")
@@ -67,11 +68,66 @@ def cargar_menu_principal():
     label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Arial", 16), bg="lightblue")
     label_bienvenida.pack(pady=50)
 
-    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
-    btn_salir.pack(pady=10)
-    
+    btn_cambiar_contraseña = tk.Button(window, text="Gestion Clientes", width=15, command=ventana_gestion_clientes)
+    btn_cambiar_contraseña.pack(pady=10)
+
     btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
     btn_cambiar_contraseña.pack(pady=10)
+
+    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
+    btn_salir.pack(pady=10)
+
+def ventana_gestion_clientes():
+    limpiar_ventana()
+    window.title("Gestion Clientes")
+
+    label_cedula = tk.Label(window, text="Cedula:")
+    label_cedula.pack()
+    entry_cedula = tk.Entry(window)
+    entry_cedula.pack()
+
+    label_nombre = tk.Label(window, text="Nombre:")
+    label_nombre.pack()
+    entry_nombre = tk.Entry(window)
+    entry_nombre.pack()
+
+    label_apellido = tk.Label(window, text="Apellido:")
+    label_apellido.pack()
+    entry_apellido = tk.Entry(window)
+    entry_apellido.pack()
+
+    label_direccion = tk.Label(window, text="Direccion:")
+    label_direccion.pack()
+    entry_direccion = tk.Entry(window)
+    entry_direccion.pack()
+
+    label_telefono = tk.Label(window, text="Telefono:")
+    label_telefono.pack()
+    entry_telefono = tk.Entry(window)
+    entry_telefono.pack()
+
+    btn_crear = tk.Button(window, text="Crear Cliente", command=lambda: crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
+    btn_crear.pack(pady=5)
+
+    btn_actualizar = tk.Button(window, text="Actualizar Cliente", command=lambda: actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
+    btn_actualizar.pack(pady=5)
+
+    btn_inhabilitar = tk.Button(window, text="Inhabilitar Cliente", command=lambda: inhabilitar_cliente(entry_cedula, tree))
+    btn_inhabilitar.pack(pady=5)
+
+    columns = ('Cedula', 'Nombre', 'Apellido','Direccion', 'Telefono')
+    tree = ttk.Treeview(window, columns=columns, show='headings')
+    tree.heading('Cedula', text='Cedula')
+    tree.heading('Nombre', text='Nombre')
+    tree.heading('Apellido', text='Apellido')
+    tree.heading('Direccion', text='Direccion')
+    tree.heading('Telefono', text='Telefono')
+    tree.pack(pady=10)
+
+    mostrar_clientes(tree)
+
+    btn_atras = tk.Button(window, text="Atrás", width=10, command=cargar_menu_principal)
+    btn_atras.pack(pady=10)
 
 def ventana_cambiar_contraseña():
     limpiar_ventana()
@@ -145,7 +201,7 @@ def obtener_usuario_actual():
 
 if __name__ == "__main__":
     window = tk.Tk()
-    window.geometry("500x500")
+    window.geometry("1000x600")
     window.configure(bg="lightblue")
     
     login_principal()
