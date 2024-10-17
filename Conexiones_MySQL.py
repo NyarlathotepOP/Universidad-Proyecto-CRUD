@@ -25,7 +25,11 @@ def obtener_credenciales(nombre_usuario, contraseña):
         with closing(connection):
             with connection.cursor() as cursor:
                 try:
-                    query = "SELECT contraseña FROM usuarios WHERE nombre_usuario = %s AND estado = 1"
+                    query = """
+                    SELECT contraseña FROM usuarios 
+                    WHERE nombre_usuario = %s 
+                    AND estado = 1
+                    """
                     cursor.execute(query, (nombre_usuario,))
                     result = cursor.fetchone()
                     
