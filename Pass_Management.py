@@ -33,7 +33,7 @@ def enviar_correo(destinatario, nombre_usuario, nombres, apellidos, contrasena):
     mensaje = MIMEMultipart()
     mensaje['From'] = remitente
     mensaje['To'] = destinatario
-    mensaje['Subject'] = "Recuperación de contraseña"
+    mensaje['Subject'] = "Usuario y Contraseña"
 
     body = f"Hola {nombres} {apellidos},\n\nTu usuario es: {nombre_usuario}\nTu contraseña es: {contrasena}\n\nPor favor, cambia tu contraseña después de iniciar sesión."
     mensaje.attach(MIMEText(body, 'plain'))

@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
+import random
+import string
 from mysql.connector import Error
 from Conexiones_MySQL import conectar_db
+from Pass_Management import enviar_correo
 from contextlib import closing
 
 def limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario):
@@ -17,6 +20,11 @@ def validar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entr
         return False
     return True
 
+def generar_contrasena(longitud=8):
+    caracteres = string.ascii_letters + string.digits
+    contrasena = ''.join(random.choice(caracteres) for _ in range(longitud))
+    return contrasena
+
 def crear_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree):
     if validar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario):
         cedula = entry_cedula.get()
@@ -27,15 +35,21 @@ def crear_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry
         perfil_seleccionado = combobox_perfil.get()
         id_perfil = 1 if perfil_seleccionado == 'Administrador' else 2
 
+        contrasena = generar_contrasena()
+
         connection = conectar_db()
         if connection:
             with closing(connection):
                 try:
                     with connection.cursor() as cursor:
-                        query = "INSERT INTO usuarios (cedula, nombres, apellidos, email, nombre_usuario, id_perfil, estado) VALUES (%s, %s, %s, %s, %s, %s, 1)"
-                        cursor.execute(query, (cedula, nombre, apellido, email, usuario, id_perfil))
+                        query = """
+                        INSERT INTO usuarios (cedula, nombres, apellidos, email, nombre_usuario, contraseña, id_perfil, estado) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, 1)
+                        """
+                        cursor.execute(query, (cedula, nombre, apellido, email, usuario, contrasena, id_perfil))
                         connection.commit()
                         messagebox.showinfo("Correcto", "Usuario creado con éxito.")
+                        enviar_correo(email, usuario, nombre, apellido, contrasena)
                         limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario)
                         mostrar_usuarios(tree)
                 except Error as e:
