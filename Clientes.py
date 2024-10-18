@@ -157,3 +157,44 @@ def buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, 
                         messagebox.showinfo("Información", "No se encontró ningún cliente con esa cédula.")
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo realizar la búsqueda: {e}")
+
+def mostrar_all(tree):
+    connection = conectar_db()
+    if connection:
+        with closing(connection):
+            try:
+                with connection.cursor() as cursor:
+                    query = """
+                    SELECT cedula, nombre, apellido, direccion, telefono 
+                    FROM clientes 
+                    """
+                    cursor.execute(query)
+                    rows = cursor.fetchall()
+
+                    for row in tree.get_children():
+                        tree.delete(row)
+
+                    for row in rows:
+                        tree.insert("", tk.END, values=row)
+            except Error as e:
+                messagebox.showerror(f"No se pudo obtener la lista de clientes: {e}")
+
+def habilitar_cliente(entry_cedula, tree):
+    cedula = entry_cedula.get()
+
+    connection = conectar_db()
+    if connection:
+        with closing(connection):
+            try:
+                with connection.cursor() as cursor:
+                    query = """
+                    UPDATE clientes
+                    SET estado=1
+                    WHERE cedula=%s
+                    """
+                    cursor.execute(query, (cedula,))
+                    connection.commit()
+                    messagebox.showinfo("Información", "El usuario ha sido habilitado con éxito.")
+                    mostrar_all(tree)
+            except Error as e:
+                messagebox.showerror(f"No se pudo habilitar el usuario: {e}")
