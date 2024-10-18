@@ -26,24 +26,25 @@ def obtener_credenciales(nombre_usuario, contraseña):
             with connection.cursor() as cursor:
                 try:
                     query = """
-                    SELECT contraseña FROM usuarios 
+                    SELECT id_perfil, estado FROM usuarios 
                     WHERE nombre_usuario = %s 
-                    AND estado = 1
+                    AND contraseña = %s
                     """
-                    cursor.execute(query, (nombre_usuario,))
+                    cursor.execute(query, (nombre_usuario, contraseña))
                     result = cursor.fetchone()
                     
                     if result:
-                        contraseña_en_db = result[0]
-                        if contraseña == contraseña_en_db:
+                        id_perfil, estado = result
+
+                        if result:
                             print("Inicio de sesión exitoso")
-                            return True
+                            return (id_perfil, estado)
                         else:
                             print("Contraseña incorrecta")
-                            return False
+                            return None
                     else:
                         print("Usuario no encontrado o inactivo")
-                        return False
+                        return None
                 except Error as e:
                     print(f"Error al validar las credenciales: {e}")
                     return False
