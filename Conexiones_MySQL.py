@@ -33,15 +33,19 @@ def obtener_credenciales(nombre_usuario, contraseña):
                     cursor.execute(query, (nombre_usuario, contraseña))
                     result = cursor.fetchone()
                     
+                    if not result:
+                        query_estudiantes = """
+                        SELECT 4 AS id_perfil, estado FROM estudiantes 
+                        WHERE nombre_usuario = %s 
+                        AND contraseña = %s
+                        """
+                        cursor.execute(query_estudiantes, (nombre_usuario, contraseña))
+                        result = cursor.fetchone()
+
                     if result:
                         id_perfil, estado = result
-
-                        if result:
-                            print("Inicio de sesión exitoso")
-                            return (id_perfil, estado)
-                        else:
-                            print("Contraseña incorrecta")
-                            return None
+                        print("Inicio de sesión exitoso")
+                        return (id_perfil, estado)
                     else:
                         print("Usuario no encontrado o inactivo")
                         return None

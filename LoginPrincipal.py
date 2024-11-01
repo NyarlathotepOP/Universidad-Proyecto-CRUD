@@ -5,6 +5,7 @@ from Pass_Management import recuperar_contrasena
 from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario
+from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -75,6 +76,9 @@ def menu_principal_admin():
     btn_cambiar_contraseña = tk.Button(window, text="Gestion Usuarios", width=15, command=admin_gestion_usuarios)
     btn_cambiar_contraseña.pack(pady=10)
 
+    btn_cambiar_contraseña = tk.Button(window, text="Gestion Estudiantes", width=15, command=admin_gestion_estudiantes)
+    btn_cambiar_contraseña.pack(pady=10)
+
     btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
     btn_salir.pack(pady=10)
 
@@ -87,6 +91,22 @@ def menu_principal_usuario():
 
     btn_cambiar_contraseña = tk.Button(window, text="Gestion Clientes", width=15, command=ventana_gestion_clientes)
     btn_cambiar_contraseña.pack(pady=10)
+
+    btn_cambiar_contraseña = tk.Button(window, text="Gestion Estudiantes", width=15, command=ventana_gestion_estudiantes)
+    btn_cambiar_contraseña.pack(pady=10)
+
+    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
+    btn_cambiar_contraseña.pack(pady=10)
+
+    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
+    btn_salir.pack(pady=10)
+
+def menu_principal_estudiante():
+    limpiar_ventana()
+    window.title("Menú Principal Estudiante")
+
+    label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Arial", 16), bg="lightblue")
+    label_bienvenida.pack(pady=50)
 
     btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
     btn_cambiar_contraseña.pack(pady=10)
@@ -221,6 +241,66 @@ def admin_gestion_usuarios():
     btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_admin)
     btn_atras.pack(pady=10)
 
+def admin_gestion_estudiantes():
+    limpiar_ventana()
+    window.title("Gestion Estudiantes - Administrador")
+
+    label_ID = tk.Label(window, text="ID:")
+    label_ID.pack()
+    entry_ID = tk.Entry(window)
+    entry_ID.pack()
+
+    label_nombre = tk.Label(window, text="Nombre:")
+    label_nombre.pack()
+    entry_nombre = tk.Entry(window)
+    entry_nombre.pack()
+
+    label_apellido = tk.Label(window, text="Apellido:")
+    label_apellido.pack()
+    entry_apellido = tk.Entry(window)
+    entry_apellido.pack()
+
+    label_email = tk.Label(window, text="Email:")
+    label_email.pack()
+    entry_email = tk.Entry(window)
+    entry_email.pack()
+
+    label_usuario = tk.Label(window, text="Usuario:")
+    label_usuario.pack()
+    entry_usuario = tk.Entry(window)
+    entry_usuario.pack()
+
+    btn_buscar = tk.Button(window, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_buscar.pack(pady=5)
+
+    btn_crear = tk.Button(window, text="Crear Usuario", command=lambda: crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
+    btn_crear.pack(pady=5)
+
+    btn_actualizar = tk.Button(window, text="Actualizar Usuario", command=lambda: actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
+    btn_actualizar.pack(pady=5)
+
+    btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: inhabilitar_estudiante(entry_ID, tree))
+    btn_inhabilitar.pack(pady=5)
+
+    btn_habilitar = tk.Button(window, text="Habilitar Usuario", command=lambda: habilitar_estudiante(entry_ID, tree))
+    btn_habilitar.pack(pady=5)
+
+    columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
+    tree = ttk.Treeview(window, columns=columns, show='headings')
+    tree.heading('ID', text='ID')
+    tree.heading('Nombre', text='Nombre')
+    tree.heading('Apellido', text='Apellido')
+    tree.heading('Email', text='Email')
+    tree.heading('Usuario', text='Usuario')
+    tree.pack(pady=10)
+
+    tree.bind("<<TreeviewSelect>>", lambda event: seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+
+    mostrar_all_estudiante(tree)
+
+    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_admin)
+    btn_atras.pack(pady=10)
+
 def ventana_gestion_clientes():
     limpiar_ventana()
     window.title("Gestion Clientes")
@@ -274,6 +354,63 @@ def ventana_gestion_clientes():
     tree.bind("<<TreeviewSelect>>", lambda event: seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
 
     mostrar_clientes(tree)
+
+    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
+    btn_atras.pack(pady=10)
+
+def ventana_gestion_estudiantes():
+    limpiar_ventana()
+    window.title("Gestion Estudiantes")
+
+    label_ID = tk.Label(window, text="ID:")
+    label_ID.pack()
+    entry_ID = tk.Entry(window)
+    entry_ID.pack()
+
+    label_nombre = tk.Label(window, text="Nombre:")
+    label_nombre.pack()
+    entry_nombre = tk.Entry(window)
+    entry_nombre.pack()
+
+    label_apellido = tk.Label(window, text="Apellido:")
+    label_apellido.pack()
+    entry_apellido = tk.Entry(window)
+    entry_apellido.pack()
+
+    label_email = tk.Label(window, text="Email:")
+    label_email.pack()
+    entry_email = tk.Entry(window)
+    entry_email.pack()
+
+    label_usuario = tk.Label(window, text="Usuario:")
+    label_usuario.pack()
+    entry_usuario = tk.Entry(window)
+    entry_usuario.pack()
+
+    btn_buscar = tk.Button(window, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_buscar.pack(pady=5)
+
+    btn_crear = tk.Button(window, text="Crear Usuario", command=lambda: crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
+    btn_crear.pack(pady=5)
+
+    btn_actualizar = tk.Button(window, text="Actualizar Usuario", command=lambda: actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
+    btn_actualizar.pack(pady=5)
+
+    btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: inhabilitar_estudiante(entry_ID, tree))
+    btn_inhabilitar.pack(pady=5)
+
+    columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
+    tree = ttk.Treeview(window, columns=columns, show='headings')
+    tree.heading('ID', text='ID')
+    tree.heading('Nombre', text='Nombre')
+    tree.heading('Apellido', text='Apellido')
+    tree.heading('Email', text='Email')
+    tree.heading('Usuario', text='Usuario')
+    tree.pack(pady=10)
+
+    tree.bind("<<TreeviewSelect>>", lambda event: seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+
+    mostrar_estudiante(tree)
 
     btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
     btn_atras.pack(pady=10)
@@ -350,6 +487,8 @@ def iniciar_sesion(nombre_usuario, contraseña):
                 menu_principal_admin()
             elif id_perfil == 2:
                 menu_principal_usuario()
+            elif id_perfil == 4:
+                menu_principal_estudiante()
         else:
             print("Usuario inactivo")
             messagebox.showerror("Error", "El usuario está inhabilitado")
