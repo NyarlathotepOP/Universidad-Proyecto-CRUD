@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
+import subprocess
 from Pass_Management import recuperar_contrasena
-from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña
+from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conectar_db
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario
 from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante
+from Game_Math import iniciar_juego
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -15,33 +17,40 @@ def login_principal():
     limpiar_ventana()
     window.title("Inicio Sesion")
 
-    img = Image.open("img/inicio.png")
-    img = img.resize((300, 300), Image.Resampling.LANCZOS)
+    img = Image.open("img/inicio_log.png")
+    img = img.resize((450, 400), Image.Resampling.LANCZOS)
     img = ImageTk.PhotoImage(img)
 
-    label_img = tk.Label(window, image=img, bg="lightblue")
+    label_img = tk.Label(window, image=img, bg="cyan3")
     label_img.image = img
     label_img.pack(pady=10)
+    
+    x_centro = 500
+    y_inicial = 450
+    incremento_x = 150
 
-    label_user = tk.Label(window, text="Usuario", bg="lightblue", font=("Arial", 12))
-    label_user.pack(pady=5)
+    label_text = tk.Label(window, text="Inicio de Sesion", font=("Calibri", 25), bg="cyan3")
+    label_text.place(x=x_centro, y=y_inicial, anchor="center")
+
+    label_user = tk.Label(window, text="Usuario", font=("Arial", 12), bg="cyan3")
+    label_user.place(x=x_centro - incremento_x, y=y_inicial + 50, anchor="center")
     entry_user = tk.Entry(window, width=30)
-    entry_user.pack()
+    entry_user.place(x=x_centro, y=y_inicial + 50, anchor="center")
 
-    label_pass = tk.Label(window, text="Contraseña", bg="lightblue", font=("Arial", 12))
-    label_pass.pack(pady=5)
+    label_pass = tk.Label(window, text="Contraseña", font=("Arial", 12), bg="cyan3")
+    label_pass.place(x=x_centro - incremento_x, y=y_inicial + 90, anchor="center")
     entry_pass = tk.Entry(window, width=30, show="*")
-    entry_pass.pack()
+    entry_pass.place(x=x_centro, y=y_inicial + 90, anchor="center")
 
     btn_login = tk.Button(window, text="Ingresar", width=15, command=lambda: iniciar_sesion(entry_user.get(), entry_pass.get()))
-    btn_login.pack(pady=20)
+    btn_login.place(x=x_centro, y=y_inicial + 130, anchor="center")
 
-    label_forgot = tk.Label(window, text="¿Olvidaste tu contraseña?", bg="lightblue", fg="blue", cursor="hand2")
-    label_forgot.pack()
+    label_forgot = tk.Label(window, text="¿Olvidaste tu contraseña?", fg="blue", cursor="hand2", bg="cyan3")
+    label_forgot.place(x=x_centro, y=y_inicial + 180, anchor="center")
     label_forgot.bind("<Button-1>", lambda e: ventana_recuperar_contrasena())
 
     btn_salir = tk.Button(window, text="Salir", width=10, command=cerrar_aplicacion)
-    btn_salir.pack(pady=10)
+    btn_salir.place(x=x_centro, y=y_inicial + 260, anchor="center")
 
 def cerrar_aplicacion():
     if messagebox.askokcancel("Salir", "¿Estás seguro de que deseas salir?"):
@@ -51,33 +60,44 @@ def ventana_recuperar_contrasena():
     limpiar_ventana()
     window.title("Recuperar Contraseña")
 
-    label_instruccion = tk.Label(window, text="Ingresa tu usuario o correo electrónico", bg="lightblue", font=("Arial", 12))
-    label_instruccion.pack(pady=5)
+    img = Image.open("img/pass_rec.png")
+    img = img.resize((500, 260), Image.Resampling.LANCZOS)
+    img = ImageTk.PhotoImage(img)
+
+    label_img = tk.Label(window, image=img, bg="cyan3")
+    label_img.image = img
+    label_img.pack(pady=10)
+
+    x_centro = 500
+    y_inicial = 270
+
+    label_instruccion = tk.Label(window, text="Ingresa tu usuario o correo electrónico", bg="cyan3", font=("Calibri", 25))
+    label_instruccion.place(x=x_centro, y=y_inicial, anchor="center")
 
     entry_user_or_email = tk.Entry(window, width=30)
-    entry_user_or_email.pack()
+    entry_user_or_email.place(x=x_centro, y=y_inicial + 40, anchor="center")
 
-    btn_recuperar = tk.Button(window, text="Recuperar Contraseña", width=15, command=lambda: recuperar_contrasena(entry_user_or_email.get()))
-    btn_recuperar.pack(pady=20)
+    btn_recuperar = tk.Button(window, text="Recuperar Contraseña", width=20, command=lambda: recuperar_contrasena(entry_user_or_email.get()))
+    btn_recuperar.place(x=x_centro, y=y_inicial + 80, anchor="center")
 
     btn_atras = tk.Button(window, text="Atrás", width=10, command=login_principal)
-    btn_atras.pack(pady=10)
+    btn_atras.place(x=x_centro, y=y_inicial + 180, anchor="center")
 
 def menu_principal_admin():
     limpiar_ventana()
     window.title("Sistema Principal Administrador")
 
-    label_bienvenida = tk.Label(window, text="Sistema Principal Administrador", font=("Arial", 16), bg="lightblue")
+    label_bienvenida = tk.Label(window, text="Sistema Principal Administrador", font=("Calibri", 25), bg="cyan3")
     label_bienvenida.pack(pady=50)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Gestion Clientes", width=15, command=admin_gestion_clientes)
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_gestion_clientes = tk.Button(window, text="Gestion Clientes", width=15, command=admin_gestion_clientes)
+    btn_gestion_clientes.pack(pady=10)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Gestion Usuarios", width=15, command=admin_gestion_usuarios)
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_gestion_usuario = tk.Button(window, text="Gestion Usuarios", width=15, command=admin_gestion_usuarios)
+    btn_gestion_usuario.pack(pady=10)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Gestion Estudiantes", width=15, command=admin_gestion_estudiantes)
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_gestion_estudiante = tk.Button(window, text="Gestion Estudiantes", width=15, command=admin_gestion_estudiantes)
+    btn_gestion_estudiante.pack(pady=10)
 
     btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
     btn_salir.pack(pady=10)
@@ -86,29 +106,43 @@ def menu_principal_usuario():
     limpiar_ventana()
     window.title("Menú Principal - Sistema de Gestión")
 
-    label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Arial", 16), bg="lightblue")
+    label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Calibri", 25), bg="cyan3")
     label_bienvenida.pack(pady=50)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Gestion Clientes", width=15, command=ventana_gestion_clientes)
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_gestion_clientes = tk.Button(window, text="Gestion Clientes", width=15, command=ventana_gestion_clientes)
+    btn_gestion_clientes.pack(pady=10)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Gestion Estudiantes", width=15, command=ventana_gestion_estudiantes)
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_gestion_estudiante = tk.Button(window, text="Gestion Estudiantes", width=15, command=ventana_gestion_estudiantes)
+    btn_gestion_estudiante.pack(pady=10)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
+    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=lambda: ventana_cambiar_contraseña(menu_principal_usuario))
     btn_cambiar_contraseña.pack(pady=10)
 
     btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
     btn_salir.pack(pady=10)
 
-def menu_principal_estudiante():
+def menu_principal_estudiante(id_estudiante):
     limpiar_ventana()
     window.title("Menú Principal Estudiante")
 
-    label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Arial", 16), bg="lightblue")
+    label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Calibri", 25), bg="cyan3")
     label_bienvenida.pack(pady=50)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=ventana_cambiar_contraseña)
+    def game_matematicas():
+        window.withdraw()
+        iniciar_juego(id_estudiante)
+        window.deiconify()
+
+    btn_matematicas = tk.Button(window, text="Matematicas", width=15, command=game_matematicas)
+    btn_matematicas.pack(pady=10)
+
+    btn_ciencias = tk.Button(window, text="Ciencias", width=15, command="***********")
+    btn_ciencias.pack(pady=10)
+
+    btn_geografia = tk.Button(window, text="Geografia", width=15, command="***********")
+    btn_geografia.pack(pady=10)
+
+    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=lambda: ventana_cambiar_contraseña(lambda: menu_principal_estudiante(id_estudiante_actual)))
     btn_cambiar_contraseña.pack(pady=10)
 
     btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
@@ -415,24 +449,24 @@ def ventana_gestion_estudiantes():
     btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
     btn_atras.pack(pady=10)
 
-def ventana_cambiar_contraseña():
+def ventana_cambiar_contraseña(ventana_anterior):
     limpiar_ventana()
     window.title("Cambiar Contraseña")
 
-    label_instruccion = tk.Label(window, text="Ingresa tu contraseña actual y la nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_instruccion = tk.Label(window, text="Ingresa tu contraseña actual y la nueva contraseña", bg="cyan3", font=("Arial", 12))
     label_instruccion.pack(pady=5)
 
-    label_actual = tk.Label(window, text="Contraseña actual", bg="lightblue", font=("Arial", 12))
+    label_actual = tk.Label(window, text="Contraseña actual", bg="cyan3", font=("Arial", 12))
     label_actual.pack(pady=5)
     entry_actual = tk.Entry(window, width=30, show="*")
     entry_actual.pack()
 
-    label_nueva = tk.Label(window, text="Nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_nueva = tk.Label(window, text="Nueva contraseña", bg="cyan3", font=("Arial", 12))
     label_nueva.pack(pady=5)
     entry_nueva = tk.Entry(window, width=30, show="*")
     entry_nueva.pack()
 
-    label_confirmar = tk.Label(window, text="Confirmar nueva contraseña", bg="lightblue", font=("Arial", 12))
+    label_confirmar = tk.Label(window, text="Confirmar nueva contraseña", bg="cyan3", font=("Arial", 12))
     label_confirmar.pack(pady=5)
     entry_confirmar = tk.Entry(window, width=30, show="*")
     entry_confirmar.pack()
@@ -440,7 +474,7 @@ def ventana_cambiar_contraseña():
     btn_actualizar = tk.Button(window, text="Actualizar Contraseña", width=15, command=lambda: cambiar_contraseña(entry_actual.get(), entry_nueva.get(), entry_confirmar.get()))
     btn_actualizar.pack(pady=20)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
+    btn_atras = tk.Button(window, text="Atrás", width=10, command=ventana_anterior)
     btn_atras.pack(pady=10)
 
 def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contraseña):
@@ -468,11 +502,12 @@ def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contras
         messagebox.showerror("La contraseña actual es incorrecta.")
 
 usuario_actual = None
+id_estudiante_actual = None
 def iniciar_sesion(nombre_usuario, contraseña):
-    global usuario_actual
+    global usuario_actual, id_estudiante_actual
 
     if not nombre_usuario or not contraseña:
-        messagebox.showwarning("Por favor, ingresa un usuario y contraseña válidos")
+        messagebox.showwarning("Advertencia", "Por favor, ingresa un usuario y contraseña válidos")
         return
 
     credenciales = obtener_credenciales(nombre_usuario, contraseña)
@@ -488,7 +523,20 @@ def iniciar_sesion(nombre_usuario, contraseña):
             elif id_perfil == 2:
                 menu_principal_usuario()
             elif id_perfil == 4:
-                menu_principal_estudiante()
+                conexion = conectar_db()
+                if conexion:
+                    cursor = conexion.cursor()
+                    query = "SELECT ID FROM estudiantes WHERE nombre_usuario = %s"
+                    cursor.execute(query, (nombre_usuario,))
+                    resultado = cursor.fetchone()
+                    cursor.close()
+                    conexion.close()
+                    
+                    if resultado:
+                        id_estudiante_actual = resultado[0]
+                        menu_principal_estudiante(id_estudiante_actual)
+                    else:
+                        print("Error: Estudiante no encontrado.")
         else:
             print("Usuario inactivo")
             messagebox.showerror("Error", "El usuario está inhabilitado")
@@ -496,13 +544,14 @@ def iniciar_sesion(nombre_usuario, contraseña):
         print("Credenciales incorrectas")
         messagebox.showerror("Error", "Credenciales incorrectas")
 
+
 def obtener_usuario_actual():
-    return usuario_actual
+    return usuario_actual, id_estudiante_actual
 
 if __name__ == "__main__":
     window = tk.Tk()
-    window.geometry("1000x650")
-    window.configure(bg="lightblue")
-    
+    window.geometry("1000x800")
+    window.configure(bg="cyan3")
+
     login_principal()
     window.mainloop()
