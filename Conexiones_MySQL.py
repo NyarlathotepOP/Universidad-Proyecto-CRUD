@@ -59,22 +59,37 @@ def obtener_correo(user_or_email):
         with closing(connection):
             with connection.cursor() as cursor:
                 try:
-                    query = """
+                    user_or_email = user_or_email.strip()
+
+                    query_usuarios = """
                     SELECT email, nombre_usuario, nombres, apellidos FROM usuarios 
                     WHERE (LOWER(nombre_usuario) = LOWER(%s) OR LOWER(email) = LOWER(%s)) 
                     AND estado = 1
                     """
-                    cursor.execute(query, (user_or_email, user_or_email))
+                    cursor.execute(query_usuarios, (user_or_email, user_or_email))
                     result = cursor.fetchone()
-                    
+
                     if result:
                         return result
                     else:
-                        print("Usuario o correo no encontrado o inactivo")
-                        return None
+                        query_estudiantes = """
+                        SELECT email, nombre_usuario, nombre, apellido FROM estudiantes 
+                        WHERE (LOWER(nombre_usuario) = LOWER(%s) OR LOWER(email) = LOWER(%s)) 
+                        AND estado = 1
+                        """
+                        cursor.execute(query_estudiantes, (user_or_email, user_or_email))
+                        result = cursor.fetchone()
+                        
+                        if result:
+                            return result
+                        else:
+                            print("Usuario o correo no encontrado o inactivo")
+                            return None
                 except Error as e:
                     print(f"Error al obtener el correo: {e}")
                     return None
+
+
 
 def obtener_contrasena_usuario(nombre_usuario):
     connection = conectar_db()
@@ -82,21 +97,32 @@ def obtener_contrasena_usuario(nombre_usuario):
         with closing(connection):
             with connection.cursor() as cursor:
                 try:
-                    query = """
+                    query_usuarios = """
                     SELECT contraseña FROM usuarios 
                     WHERE LOWER(nombre_usuario) = LOWER(%s) AND estado = 1
                     """
-                    cursor.execute(query, (nombre_usuario,))
+                    cursor.execute(query_usuarios, (nombre_usuario,))
                     result = cursor.fetchone()
                     
                     if result:
                         return result[0]
                     else:
-                        print("Usuario no encontrado o inactivo")
-                        return None
+                        query_estudiantes = """
+                        SELECT contraseña FROM estudiantes 
+                        WHERE LOWER(nombre_usuario) = LOWER(%s) AND estado = 1
+                        """
+                        cursor.execute(query_estudiantes, (nombre_usuario,))
+                        result = cursor.fetchone()
+                        
+                        if result:
+                            return result[0]
+                        else:
+                            print("Usuario no encontrado o inactivo")
+                            return None
                 except Error as e:
                     print(f"Error al obtener la contraseña: {e}")
                     return None
+
 
 def actualizar_contraseña(nombre_usuario, nueva_contraseña):
     connection = conectar_db()
@@ -104,14 +130,27 @@ def actualizar_contraseña(nombre_usuario, nueva_contraseña):
         with closing(connection):
             with connection.cursor() as cursor:
                 try:
-                    query = """
+                    query_usuarios = """
                     UPDATE usuarios SET contraseña = %s 
                     WHERE nombre_usuario = %s 
                     AND estado = 1
                     """
-                    cursor.execute(query, (nueva_contraseña, nombre_usuario))
-                    connection.commit()
-                    return True
+                    cursor.execute(query_usuarios, (nueva_contraseña, nombre_usuario))
+                    
+                    if cursor.rowcount == 0:
+                        query_estudiantes = """
+                        UPDATE estudiantes SET contraseña = %s 
+                        WHERE nombre_usuario = %s 
+                        AND estado = 1
+                        """
+                        cursor.execute(query_estudiantes, (nueva_contraseña, nombre_usuario))
+                    
+                    if cursor.rowcount > 0:
+                        connection.commit()
+                        return True
+                    else:
+                        print("Usuario no encontrado o inactivo.")
+                        return False
                 except Error as e:
                     print(f"Error al actualizar la contraseña: {e}")
                     return False

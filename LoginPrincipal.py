@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
-import subprocess
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from Pass_Management import recuperar_contrasena
 from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conectar_db
-from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente
-from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario
-from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante
+from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente, limpiar_campos
+from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario, limpiar_campos
+from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante, limpiar_campos
 from Game_Math import iniciar_juego
 
 def limpiar_ventana():
@@ -21,7 +22,7 @@ def login_principal():
     img = img.resize((450, 400), Image.Resampling.LANCZOS)
     img = ImageTk.PhotoImage(img)
 
-    label_img = tk.Label(window, image=img, bg="cyan3")
+    label_img = tk.Label(window, image=img)
     label_img.image = img
     label_img.pack(pady=10)
     
@@ -29,27 +30,27 @@ def login_principal():
     y_inicial = 450
     incremento_x = 150
 
-    label_text = tk.Label(window, text="Inicio de Sesion", font=("Calibri", 25), bg="cyan3")
+    label_text = tk.Label(window, text="Inicio de Sesion", font=("Calibri", 25))
     label_text.place(x=x_centro, y=y_inicial, anchor="center")
 
-    label_user = tk.Label(window, text="Usuario", font=("Arial", 12), bg="cyan3")
+    label_user = tk.Label(window, text="Usuario", font=("Arial", 12))
     label_user.place(x=x_centro - incremento_x, y=y_inicial + 50, anchor="center")
     entry_user = tk.Entry(window, width=30)
     entry_user.place(x=x_centro, y=y_inicial + 50, anchor="center")
 
-    label_pass = tk.Label(window, text="Contraseña", font=("Arial", 12), bg="cyan3")
+    label_pass = tk.Label(window, text="Contraseña", font=("Arial", 12))
     label_pass.place(x=x_centro - incremento_x, y=y_inicial + 90, anchor="center")
     entry_pass = tk.Entry(window, width=30, show="*")
     entry_pass.place(x=x_centro, y=y_inicial + 90, anchor="center")
 
-    btn_login = tk.Button(window, text="Ingresar", width=15, command=lambda: iniciar_sesion(entry_user.get(), entry_pass.get()))
+    btn_login = ttk.Button(window, text="Ingresar", width=15, bootstyle=SUCCESS, command=lambda: iniciar_sesion(entry_user.get(), entry_pass.get()))
     btn_login.place(x=x_centro, y=y_inicial + 130, anchor="center")
 
-    label_forgot = tk.Label(window, text="¿Olvidaste tu contraseña?", fg="blue", cursor="hand2", bg="cyan3")
+    label_forgot = tk.Label(window, text="¿Olvidaste tu contraseña?", fg="blue", cursor="hand2")
     label_forgot.place(x=x_centro, y=y_inicial + 180, anchor="center")
     label_forgot.bind("<Button-1>", lambda e: ventana_recuperar_contrasena())
 
-    btn_salir = tk.Button(window, text="Salir", width=10, command=cerrar_aplicacion)
+    btn_salir = ttk.Button(window, text="Salir", width=10, command=cerrar_aplicacion, bootstyle=DANGER)
     btn_salir.place(x=x_centro, y=y_inicial + 260, anchor="center")
 
 def cerrar_aplicacion():
@@ -64,93 +65,96 @@ def ventana_recuperar_contrasena():
     img = img.resize((500, 260), Image.Resampling.LANCZOS)
     img = ImageTk.PhotoImage(img)
 
-    label_img = tk.Label(window, image=img, bg="cyan3")
+    label_img = tk.Label(window, image=img)
     label_img.image = img
     label_img.pack(pady=10)
 
     x_centro = 500
-    y_inicial = 270
+    y_inicial = 300
 
-    label_instruccion = tk.Label(window, text="Ingresa tu usuario o correo electrónico", bg="cyan3", font=("Calibri", 25))
+    label_instruccion = tk.Label(window, text="Ingresa tu usuario o correo electrónico", font=("Calibri", 25))
     label_instruccion.place(x=x_centro, y=y_inicial, anchor="center")
 
     entry_user_or_email = tk.Entry(window, width=30)
-    entry_user_or_email.place(x=x_centro, y=y_inicial + 40, anchor="center")
+    entry_user_or_email.place(x=x_centro, y=y_inicial + 60, anchor="center")
 
-    btn_recuperar = tk.Button(window, text="Recuperar Contraseña", width=20, command=lambda: recuperar_contrasena(entry_user_or_email.get()))
-    btn_recuperar.place(x=x_centro, y=y_inicial + 80, anchor="center")
+    btn_recuperar = ttk.Button(window, text="Recuperar Contraseña", width=20, command=lambda: recuperar_contrasena(entry_user_or_email.get()), bootstyle=SUCCESS)
+    btn_recuperar.place(x=x_centro, y=y_inicial + 120, anchor="center")
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=login_principal)
-    btn_atras.place(x=x_centro, y=y_inicial + 180, anchor="center")
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=login_principal, bootstyle=INFO)
+    btn_atras.place(x=x_centro, y=y_inicial + 220, anchor="center")
 
 def menu_principal_admin():
     limpiar_ventana()
     window.title("Sistema Principal Administrador")
 
-    label_bienvenida = tk.Label(window, text="Sistema Principal Administrador", font=("Calibri", 25), bg="cyan3")
-    label_bienvenida.pack(pady=50)
+    label_bienvenida = tk.Label(window, text="Sistema Principal Administrador", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(70,100))
 
-    btn_gestion_clientes = tk.Button(window, text="Gestion Clientes", width=15, command=admin_gestion_clientes)
-    btn_gestion_clientes.pack(pady=10)
+    btn_gestion_clientes = ttk.Button(window, text="Gestion Clientes", width=25, command=admin_gestion_clientes, bootstyle=WARNING)
+    btn_gestion_clientes.pack(pady=20)
 
-    btn_gestion_usuario = tk.Button(window, text="Gestion Usuarios", width=15, command=admin_gestion_usuarios)
-    btn_gestion_usuario.pack(pady=10)
+    btn_gestion_usuario = ttk.Button(window, text="Gestion Usuarios", width=25, command=admin_gestion_usuarios, bootstyle=WARNING)
+    btn_gestion_usuario.pack(pady=20)
 
-    btn_gestion_estudiante = tk.Button(window, text="Gestion Estudiantes", width=15, command=admin_gestion_estudiantes)
-    btn_gestion_estudiante.pack(pady=10)
+    btn_gestion_estudiante = ttk.Button(window, text="Gestion Estudiantes", width=25, command=admin_gestion_estudiantes, bootstyle=WARNING)
+    btn_gestion_estudiante.pack(pady=(20,70))
 
-    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
-    btn_salir.pack(pady=10)
+    btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
+    btn_salir.pack(pady=15)
 
 def menu_principal_usuario():
     limpiar_ventana()
     window.title("Menú Principal - Sistema de Gestión")
 
-    label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Calibri", 25), bg="cyan3")
-    label_bienvenida.pack(pady=50)
+    label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(70,100))
 
-    btn_gestion_clientes = tk.Button(window, text="Gestion Clientes", width=15, command=ventana_gestion_clientes)
-    btn_gestion_clientes.pack(pady=10)
+    btn_gestion_clientes = ttk.Button(window, text="Gestion Clientes", width=25, command=ventana_gestion_clientes, bootstyle=WARNING)
+    btn_gestion_clientes.pack(pady=20)
 
-    btn_gestion_estudiante = tk.Button(window, text="Gestion Estudiantes", width=15, command=ventana_gestion_estudiantes)
-    btn_gestion_estudiante.pack(pady=10)
+    btn_gestion_estudiante = ttk.Button(window, text="Gestion Estudiantes", width=25, command=ventana_gestion_estudiantes, bootstyle=WARNING)
+    btn_gestion_estudiante.pack(pady=20)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=lambda: ventana_cambiar_contraseña(menu_principal_usuario))
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_cambiar_contraseña = ttk.Button(window, text="Cambiar Contraseña", width=20, command=lambda: ventana_cambiar_contraseña(menu_principal_usuario), bootstyle=INFO)
+    btn_cambiar_contraseña.pack(pady=(70,15))
 
-    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
-    btn_salir.pack(pady=10)
+    btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
+    btn_salir.pack(pady=15)
 
 def menu_principal_estudiante(id_estudiante):
     limpiar_ventana()
     window.title("Menú Principal Estudiante")
 
-    label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Calibri", 25), bg="cyan3")
-    label_bienvenida.pack(pady=50)
+    label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(70,100))
 
     def game_matematicas():
         window.withdraw()
         iniciar_juego(id_estudiante)
         window.deiconify()
 
-    btn_matematicas = tk.Button(window, text="Matematicas", width=15, command=game_matematicas)
-    btn_matematicas.pack(pady=10)
+    btn_matematicas = ttk.Button(window, text="Matematicas", width=25, command=game_matematicas, bootstyle=WARNING)
+    btn_matematicas.pack(pady=20)
 
-    btn_ciencias = tk.Button(window, text="Ciencias", width=15, command="***********")
-    btn_ciencias.pack(pady=10)
+    btn_ciencias = ttk.Button(window, text="Ciencias", width=25, command="***********", bootstyle=WARNING)
+    btn_ciencias.pack(pady=20)
 
-    btn_geografia = tk.Button(window, text="Geografia", width=15, command="***********")
-    btn_geografia.pack(pady=10)
+    btn_geografia = ttk.Button(window, text="Geografia", width=25, command="***********", bootstyle=WARNING)
+    btn_geografia.pack(pady=20)
 
-    btn_cambiar_contraseña = tk.Button(window, text="Cambiar Contraseña", width=15, command=lambda: ventana_cambiar_contraseña(lambda: menu_principal_estudiante(id_estudiante_actual)))
-    btn_cambiar_contraseña.pack(pady=10)
+    btn_cambiar_contraseña = ttk.Button(window, text="Cambiar Contraseña", width=20, command=lambda: ventana_cambiar_contraseña(lambda: menu_principal_estudiante(id_estudiante_actual)), bootstyle=INFO)
+    btn_cambiar_contraseña.pack(pady=(70,15))
 
-    btn_salir = tk.Button(window, text="Cerrar Sesion", width=10, command=login_principal)
-    btn_salir.pack(pady=10)
+    btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
+    btn_salir.pack(pady=15)
 
 def admin_gestion_clientes():
     limpiar_ventana()
     window.title("Gestion Clientes - Administrador")
+
+    label_bienvenida = tk.Label(window, text="Gestion Clientes - Administrador", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(30,30))
 
     label_cedula = tk.Label(window, text="Cedula:")
     label_cedula.pack()
@@ -192,6 +196,9 @@ def admin_gestion_clientes():
     btn_habilitar = tk.Button(window, text="Habilitar Cliente", command=lambda: habilitar_cliente(entry_cedula, tree))
     btn_habilitar.pack(pady=5)
 
+    btn_habilitar = tk.Button(window, text="Limpiar", command=lambda: limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
+    btn_habilitar.pack(pady=5)
+
     columns = ('Cedula', 'Nombre', 'Apellido','Direccion', 'Telefono')
     tree = ttk.Treeview(window, columns=columns, show='headings')
     tree.heading('Cedula', text='Cedula')
@@ -211,6 +218,9 @@ def admin_gestion_clientes():
 def admin_gestion_usuarios():
     limpiar_ventana()
     window.title("Gestion Usuarios - Administrador")
+
+    label_bienvenida = tk.Label(window, text="Gestion Usuarios - Administrador", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(30,30))
 
     label_cedula = tk.Label(window, text="Cedula:")
     label_cedula.pack()
@@ -259,6 +269,9 @@ def admin_gestion_usuarios():
     btn_habilitar = tk.Button(window, text="Habilitar Usuario", command=lambda: habilitar_usuario(entry_cedula, tree))
     btn_habilitar.pack(pady=5)
 
+    btn_habilitar = tk.Button(window, text="Limpiar", command=lambda: limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_habilitar.pack(pady=5)
+
     columns = ('Cedula', 'Nombre', 'Apellido', 'Email', 'Usuario')
     tree = ttk.Treeview(window, columns=columns, show='headings')
     tree.heading('Cedula', text='Cedula')
@@ -278,6 +291,9 @@ def admin_gestion_usuarios():
 def admin_gestion_estudiantes():
     limpiar_ventana()
     window.title("Gestion Estudiantes - Administrador")
+
+    label_bienvenida = tk.Label(window, text="Gestion Estudiantes - Administrador", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(30,30))
 
     label_ID = tk.Label(window, text="ID:")
     label_ID.pack()
@@ -319,6 +335,9 @@ def admin_gestion_estudiantes():
     btn_habilitar = tk.Button(window, text="Habilitar Usuario", command=lambda: habilitar_estudiante(entry_ID, tree))
     btn_habilitar.pack(pady=5)
 
+    btn_habilitar = tk.Button(window, text="Limpiar", command=lambda: limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_habilitar.pack(pady=5)
+
     columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
     tree = ttk.Treeview(window, columns=columns, show='headings')
     tree.heading('ID', text='ID')
@@ -338,6 +357,9 @@ def admin_gestion_estudiantes():
 def ventana_gestion_clientes():
     limpiar_ventana()
     window.title("Gestion Clientes")
+
+    label_bienvenida = tk.Label(window, text="Gestion Clientes", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(30,30))
 
     label_cedula = tk.Label(window, text="Cedula:")
     label_cedula.pack()
@@ -376,6 +398,9 @@ def ventana_gestion_clientes():
     btn_inhabilitar = tk.Button(window, text="Inhabilitar Cliente", command=lambda: inhabilitar_cliente(entry_cedula, tree))
     btn_inhabilitar.pack(pady=5)
 
+    btn_habilitar = tk.Button(window, text="Limpiar", command=lambda: limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
+    btn_habilitar.pack(pady=5)
+
     columns = ('Cedula', 'Nombre', 'Apellido','Direccion', 'Telefono')
     tree = ttk.Treeview(window, columns=columns, show='headings')
     tree.heading('Cedula', text='Cedula')
@@ -395,6 +420,9 @@ def ventana_gestion_clientes():
 def ventana_gestion_estudiantes():
     limpiar_ventana()
     window.title("Gestion Estudiantes")
+
+    label_bienvenida = tk.Label(window, text="Gestion Estudiantes", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(30,30))
 
     label_ID = tk.Label(window, text="ID:")
     label_ID.pack()
@@ -433,6 +461,9 @@ def ventana_gestion_estudiantes():
     btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: inhabilitar_estudiante(entry_ID, tree))
     btn_inhabilitar.pack(pady=5)
 
+    btn_habilitar = tk.Button(window, text="Limpiar", command=lambda: limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_habilitar.pack(pady=5)
+
     columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
     tree = ttk.Treeview(window, columns=columns, show='headings')
     tree.heading('ID', text='ID')
@@ -453,32 +484,43 @@ def ventana_cambiar_contraseña(ventana_anterior):
     limpiar_ventana()
     window.title("Cambiar Contraseña")
 
-    label_instruccion = tk.Label(window, text="Ingresa tu contraseña actual y la nueva contraseña", bg="cyan3", font=("Arial", 12))
-    label_instruccion.pack(pady=5)
+    img = Image.open("img/pass_rec.png")
+    img = img.resize((500, 260), Image.Resampling.LANCZOS)
+    img = ImageTk.PhotoImage(img)
 
-    label_actual = tk.Label(window, text="Contraseña actual", bg="cyan3", font=("Arial", 12))
-    label_actual.pack(pady=5)
-    entry_actual = tk.Entry(window, width=30, show="*")
-    entry_actual.pack()
+    label_img = tk.Label(window, image=img)
+    label_img.image = img
+    label_img.pack(pady=10)
 
-    label_nueva = tk.Label(window, text="Nueva contraseña", bg="cyan3", font=("Arial", 12))
-    label_nueva.pack(pady=5)
-    entry_nueva = tk.Entry(window, width=30, show="*")
-    entry_nueva.pack()
+    x_centro = 500
+    y_inicial = 300
 
-    label_confirmar = tk.Label(window, text="Confirmar nueva contraseña", bg="cyan3", font=("Arial", 12))
-    label_confirmar.pack(pady=5)
-    entry_confirmar = tk.Entry(window, width=30, show="*")
-    entry_confirmar.pack()
+    label_instruccion = tk.Label(window, text="Ingresa tu contraseña actual y la nueva contraseña", font=("Arial", 20))
+    label_instruccion.place(x=x_centro, y=y_inicial, anchor="center")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Contraseña", width=15, command=lambda: cambiar_contraseña(entry_actual.get(), entry_nueva.get(), entry_confirmar.get()))
-    btn_actualizar.pack(pady=20)
+    label_actual = tk.Label(window, text="Contraseña actual", font=("Arial", 12))
+    label_actual.place(x=x_centro, y=y_inicial + 60, anchor="center")
+    entry_actual = tk.Entry(window, width=35, show="*")
+    entry_actual.place(x=x_centro, y=y_inicial + 90, anchor="center")
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=ventana_anterior)
-    btn_atras.pack(pady=10)
+    label_nueva = tk.Label(window, text="Nueva contraseña", font=("Arial", 12))
+    label_nueva.place(x=x_centro, y=y_inicial + 135, anchor="center")
+    entry_nueva = tk.Entry(window, width=35, show="*")
+    entry_nueva.place(x=x_centro, y=y_inicial + 175, anchor="center")
+
+    label_confirmar = tk.Label(window, text="Confirmar nueva contraseña", font=("Arial", 12))
+    label_confirmar.place(x=x_centro, y=y_inicial + 220, anchor="center")
+    entry_confirmar = tk.Entry(window, width=35, show="*")
+    entry_confirmar.place(x=x_centro, y=y_inicial + 250, anchor="center")
+
+    btn_actualizar = ttk.Button(window, text="Actualizar Contraseña", width=25, command=lambda: cambiar_contraseña(entry_actual.get(), entry_nueva.get(), entry_confirmar.get()), bootstyle=SUCCESS)
+    btn_actualizar.place(x=x_centro, y=y_inicial + 300, anchor="center")
+
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=ventana_anterior, bootstyle=DANGER)
+    btn_atras.place(x=x_centro, y=y_inicial + 400, anchor="center")
 
 def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contraseña):
-    nombre_usuario = obtener_usuario_actual()
+    nombre_usuario = usuario_actual  
 
     if not contraseña_actual or not nueva_contraseña or not confirmar_contraseña:
         messagebox.showwarning("Por favor, completa todos los campos.")
@@ -495,7 +537,10 @@ def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contras
     if obtener_credenciales(nombre_usuario, contraseña_actual):
         if actualizar_contraseña(nombre_usuario, nueva_contraseña):
             messagebox.showinfo("Contraseña actualizada correctamente.")
-            menu_principal_usuario()
+            if id_estudiante_actual:
+                menu_principal_estudiante(id_estudiante_actual)
+            else:
+                menu_principal_usuario()
         else:
             messagebox.showerror("Hubo un problema al actualizar la contraseña.")
     else:
@@ -549,9 +594,9 @@ def obtener_usuario_actual():
     return usuario_actual, id_estudiante_actual
 
 if __name__ == "__main__":
-    window = tk.Tk()
+    window = ttk.Window(themename="superhero")
     window.geometry("1000x800")
-    window.configure(bg="cyan3")
+    window.configure(bg="#2C3E50")
 
     login_principal()
     window.mainloop()

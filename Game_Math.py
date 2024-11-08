@@ -27,14 +27,17 @@ def cargar_progreso(id_estudiantes):
     conexion = conectar_db()
     if conexion:
         cursor = conexion.cursor()
-        query = "SELECT nivel, puntos FROM estudiantes WHERE ID = %s"
+        query = """
+        SELECT nivel, puntos 
+        FROM estudiantes WHERE ID = %s
+        """
         cursor.execute(query, (id_estudiantes,))
         resultado = cursor.fetchone()
         cursor.close()
         conexion.close()
         if resultado:
             return resultado
-    return (1, 0)
+    return (0, 0)
 
 def pantalla_inicio(screen, screen_width, screen_height):
     start_screen_image = pygame.image.load("img/game_start.jpg")
