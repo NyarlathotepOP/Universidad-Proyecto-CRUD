@@ -173,109 +173,91 @@ def menu_principal_estudiante(id_estudiante):
     btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
     btn_salir.pack(pady=15)
 
-def confirm_inhabilitar_cliente(entry_cedula, tree):
-    confirm_window = tk.Toplevel(window)
-    confirm_window.title("Ventana de Confirmacion")
-    confirm_window.geometry("300x150")
-    confirm_window.grab_set()
-
-    label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este cliente?", font=("Calibri", 13))
-    label_confirmar.pack(pady=(20, 10))
-
-    btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_cliente(entry_cedula, tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
-    btn_confirmar.pack(side="left", padx=30, pady=20)
-
-    btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
-    btn_cancelar.pack(side="right", padx=30, pady=20)
-
-def confirm_inhabilitar_usuario(entry_cedula, tree):
-    confirm_window = tk.Toplevel(window)
-    confirm_window.title("Ventana de Confirmacion")
-    confirm_window.geometry("300x150")
-    confirm_window.grab_set()
-
-    label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este usuario?", font=("Calibri", 13))
-    label_confirmar.pack(pady=(20, 10))
-
-    btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_usuario(entry_cedula, tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
-    btn_confirmar.pack(side="left", padx=30, pady=20)
-
-    btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
-    btn_cancelar.pack(side="right", padx=30, pady=20)
-
-def confirm_inhabilitar_estudiante(entry_ID, tree):
-    confirm_window = tk.Toplevel(window)
-    confirm_window.title("Ventana de Confirmacion")
-    confirm_window.geometry("300x150")
-    confirm_window.grab_set()
-
-    label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este estudiante?", font=("Calibri", 13))
-    label_confirmar.pack(pady=(20, 10))
-
-    btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_estudiante(entry_ID, tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
-    btn_confirmar.pack(side="left", padx=30, pady=20)
-
-    btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
-    btn_cancelar.pack(side="right", padx=30, pady=20)
-
 def admin_gestion_clientes():
     limpiar_ventana()
     window.title("Gestion Clientes - Administrador")
 
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_all(tree)
+
+    def confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("300x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este cliente?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
     label_bienvenida = tk.Label(window, text="Gestion Clientes - Administrador", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(30,30))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
-    label_cedula = tk.Label(window, text="Cedula:")
-    label_cedula.pack()
-    entry_cedula = tk.Entry(window)
-    entry_cedula.pack()
+    label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
+    label_cedula.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_cedula = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_cedula.grid(row=1, column=1, padx=(3, 10), pady=10)
 
-    label_nombre = tk.Label(window, text="Nombre:")
-    label_nombre.pack()
-    entry_nombre = tk.Entry(window)
-    entry_nombre.pack()
+    label_nombre = tk.Label(window, text="Nombre:", font="helvetica, 12")
+    label_nombre.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_nombre = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_nombre.grid(row=2, column=1, padx=(3, 10), pady=10)
 
-    label_apellido = tk.Label(window, text="Apellido:")
-    label_apellido.pack()
-    entry_apellido = tk.Entry(window)
-    entry_apellido.pack()
+    label_apellido = tk.Label(window, text="Apellido:", font="helvetica, 12")
+    label_apellido.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_direccion = tk.Label(window, text="Direccion:")
-    label_direccion.pack()
-    entry_direccion = tk.Entry(window)
-    entry_direccion.pack()
+    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
+    label_direccion.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_direccion.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_telefono = tk.Label(window, text="Telefono:")
-    label_telefono.pack()
-    entry_telefono = tk.Entry(window)
-    entry_telefono.pack()
+    label_telefono = tk.Label(window, text="Teléfono:", font="helvetica, 12")
+    label_telefono.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_telefono = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_telefono.grid(row=5, column=1, padx=(3, 10), pady=5)
 
-    btn_buscar = tk.Button(window, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
-    btn_buscar.pack(pady=5)
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
-    btn_crear = tk.Button(window, text="Crear Cliente", command=lambda: crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
-    btn_crear.pack(pady=5)
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Cliente", command=lambda: [crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Cliente", command=lambda: actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
-    btn_actualizar.pack(pady=5)
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Cliente", command=lambda: [actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    btn_inhabilitar = tk.Button(window, text="Inhabilitar Cliente", command=lambda: confirm_inhabilitar_cliente(entry_cedula, tree), state="disabled")
-    btn_inhabilitar.pack(pady=5)
+    btn_inhabilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Inhabilitar Cliente", command=lambda: [confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)], state="disabled")
+    btn_inhabilitar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
-    btn_habilitar = tk.Button(window, text="Habilitar Cliente", command=lambda: habilitar_cliente(entry_cedula, tree))
-    btn_habilitar.pack(pady=5)
+    btn_habilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Habilitar Cliente", command=lambda: [habilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)])
+    btn_habilitar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    btn_limpiar = tk.Button(window, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
-    btn_limpiar.pack(pady=5)
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
+    btn_limpiar.grid(row=6, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('Cedula', 'Nombre', 'Apellido','Direccion', 'Telefono')
-    tree = ttk.Treeview(window, columns=columns, show='headings')
+    columns = ('Cedula', 'Nombre', 'Apellido', 'Telefono', 'Direccion')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('Cedula', text='Cedula')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
-    tree.heading('Direccion', text='Direccion')
     tree.heading('Telefono', text='Telefono')
-    tree.pack(pady=10)
+    tree.heading('Direccion', text='Direccion')
+    tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
     def select(event):
         selected = tree.selection()
@@ -285,79 +267,105 @@ def admin_gestion_clientes():
         else:
             btn_inhabilitar.config(state="disabled")
 
-
     tree.bind("<<TreeviewSelect>>", select)
 
     mostrar_all(tree)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_admin)
-    btn_atras.pack(pady=10)
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_admin, bootstyle=DANGER)
+    btn_atras.grid(row=8, column=0, columnspan=3, pady=15, sticky="n")
     
 def admin_gestion_usuarios():
     limpiar_ventana()
     window.title("Gestion Usuarios - Administrador")
 
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_usuarios(tree)
+
+    def confirm_inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("300x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este usuario?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree), refrescar_treeview(tree), confirm_window.destroy(),], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
     label_bienvenida = tk.Label(window, text="Gestion Usuarios - Administrador", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(30,30))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
-    label_cedula = tk.Label(window, text="Cedula:")
-    label_cedula.pack()
-    entry_cedula = tk.Entry(window)
-    entry_cedula.pack()
+    label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
+    label_cedula.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_cedula = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_cedula.grid(row=1, column=1, padx=(3, 10), pady=10)
 
-    label_nombre = tk.Label(window, text="Nombre:")
-    label_nombre.pack()
-    entry_nombre = tk.Entry(window)
-    entry_nombre.pack()
+    label_nombre = tk.Label(window, text="Nombre:", font="helvetica, 12")
+    label_nombre.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_nombre = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_nombre.grid(row=2, column=1, padx=(3, 10), pady=10)
 
-    label_apellido = tk.Label(window, text="Apellido:")
-    label_apellido.pack()
-    entry_apellido = tk.Entry(window)
-    entry_apellido.pack()
+    label_apellido = tk.Label(window, text="Apellido:", font="helvetica, 12")
+    label_apellido.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:")
-    label_email.pack()
-    entry_email = tk.Entry(window)
-    entry_email.pack()
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_usuario = tk.Label(window, text="Usuario:")
-    label_usuario.pack()
-    entry_usuario = tk.Entry(window)
-    entry_usuario.pack()
+    label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
+    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=10)
 
-    label_perfil = tk.Label(window, text="Perfil de Usuario:")
-    label_perfil.pack()
+    label_perfil = tk.Label(window, text="Perfil de Usuario:", font="helvetica, 12")
+    label_perfil.grid(row=6, column=0, sticky="e", padx=(10, 3), pady=5)
     opciones_perfil = ['Administrador', 'Usuario']
-    combobox_perfil = ttk.Combobox(window, values=opciones_perfil)
-    combobox_perfil.pack()
+    combobox_perfil = ttk.Combobox(window, values=opciones_perfil, width=37, font="helvetica, 10", state="readonly")
+    combobox_perfil.grid(row=6, column=1, padx=(3, 10), pady=10)
     combobox_perfil.current(1) 
 
-    btn_buscar = tk.Button(window, text="Buscar Usuario", command=lambda: buscar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario))
-    btn_buscar.pack(pady=5)
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Usuario", command=lambda: buscar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
-    btn_crear = tk.Button(window, text="Crear Usuario", command=lambda: crear_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree))
-    btn_crear.pack(pady=5)
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Usuario", command=lambda: [crear_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Usuario", command=lambda: actualizar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree))
-    btn_actualizar.pack(pady=5)
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Usuario", command=lambda: [actualizar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: confirm_inhabilitar_usuario(entry_cedula, tree), state="disabled")
-    btn_inhabilitar.pack(pady=5)
+    btn_inhabilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Inhabilitar Usuario", command=lambda: [confirm_inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree), refrescar_treeview(tree)], state="disabled")
+    btn_inhabilitar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
-    btn_habilitar = tk.Button(window, text="Habilitar Usuario", command=lambda: habilitar_usuario(entry_cedula, tree))
-    btn_habilitar.pack(pady=5)
+    btn_habilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Habilitar Usuario", command=lambda: [habilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree), refrescar_treeview(tree)])
+    btn_habilitar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    btn_limpiar = tk.Button(window, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
-    btn_limpiar.pack(pady=5)
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
+    btn_limpiar.grid(row=6, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('Cedula', 'Nombre', 'Apellido', 'Email', 'Usuario')
-    tree = ttk.Treeview(window, columns=columns, show='headings')
+    columns = ('Cedula', 'Nombre', 'Apellido', 'Usuario', 'Email')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('Cedula', text='Cedula')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
-    tree.heading('Email', text='Email')
     tree.heading('Usuario', text='Usuario')
-    tree.pack(pady=10)
+    tree.heading('Email', text='Email')
+    tree.grid(row=8, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
     def select(event):
         selected = tree.selection()
@@ -371,67 +379,94 @@ def admin_gestion_usuarios():
 
     mostrar_usuarios(tree)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_admin)
-    btn_atras.pack(pady=10)
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_admin, bootstyle=DANGER)
+    btn_atras.grid(row=9, column=0, columnspan=3, pady=15, sticky="n")
 
 def admin_gestion_estudiantes():
     limpiar_ventana()
     window.title("Gestion Estudiantes - Administrador")
 
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_all_estudiante(tree)
+
+    def confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("300x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este estudiante?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree) ,confirm_window.destroy()], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
     label_bienvenida = tk.Label(window, text="Gestion Estudiantes - Administrador", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(30,30))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
-    label_ID = tk.Label(window, text="ID:")
-    label_ID.pack()
-    entry_ID = tk.Entry(window)
-    entry_ID.pack()
+    label_ID = tk.Label(window, text="ID:", font="helvetica, 12")
+    label_ID.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_ID = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_ID.grid(row=1, column=1, padx=(3, 10), pady=10)
 
-    label_nombre = tk.Label(window, text="Nombre:")
-    label_nombre.pack()
-    entry_nombre = tk.Entry(window)
-    entry_nombre.pack()
+    label_nombre = tk.Label(window, text="Nombre:", font="helvetica, 12")
+    label_nombre.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_nombre = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_nombre.grid(row=2, column=1, padx=(3, 10), pady=10)
 
-    label_apellido = tk.Label(window, text="Apellido:")
-    label_apellido.pack()
-    entry_apellido = tk.Entry(window)
-    entry_apellido.pack()
+    label_apellido = tk.Label(window, text="Apellido:", font="helvetica, 12")
+    label_apellido.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:")
-    label_email.pack()
-    entry_email = tk.Entry(window)
-    entry_email.pack()
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_usuario = tk.Label(window, text="Usuario:")
-    label_usuario.pack()
-    entry_usuario = tk.Entry(window)
-    entry_usuario.pack()
+    label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
+    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=5)
 
-    btn_buscar = tk.Button(window, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
-    btn_buscar.pack(pady=5)
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
-    btn_crear = tk.Button(window, text="Crear Usuario", command=lambda: crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
-    btn_crear.pack(pady=5)
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Usuario", command=lambda: [crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Usuario", command=lambda: actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
-    btn_actualizar.pack(pady=5)
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Usuario", command=lambda: [actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: confirm_inhabilitar_estudiante(entry_ID, tree), state="disabled")
-    btn_inhabilitar.pack(pady=5)
+    btn_inhabilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Inhabilitar Usuario", command=lambda: [confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)], state="disabled")
+    btn_inhabilitar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
-    btn_habilitar = tk.Button(window, text="Habilitar Usuario", command=lambda: habilitar_estudiante(entry_ID, tree))
-    btn_habilitar.pack(pady=5)
+    btn_habilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Habilitar Usuario", command=lambda: [habilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)])
+    btn_habilitar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    btn_limpiar = tk.Button(window, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
-    btn_limpiar.pack(pady=5)
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
+    btn_limpiar.grid(row=6, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
-    tree = ttk.Treeview(window, columns=columns, show='headings')
+    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Email')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('ID', text='ID')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
-    tree.heading('Email', text='Email')
     tree.heading('Usuario', text='Usuario')
-    tree.pack(pady=10)
+    tree.heading('Email', text='Email')
+    tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
     def select(event):
         selected = tree.selection()
@@ -445,64 +480,91 @@ def admin_gestion_estudiantes():
 
     mostrar_all_estudiante(tree)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_admin)
-    btn_atras.pack(pady=10)
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_admin, bootstyle=DANGER) 
+    btn_atras.grid(row=8, column=0, columnspan=3, pady=15, sticky="n")
 
 def ventana_gestion_clientes():
     limpiar_ventana()
     window.title("Gestion Clientes")
 
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_clientes(tree)
+
+    def confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("300x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este cliente?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
     label_bienvenida = tk.Label(window, text="Gestion Clientes", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(30,30))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
-    label_cedula = tk.Label(window, text="Cedula:")
-    label_cedula.pack()
-    entry_cedula = tk.Entry(window)
-    entry_cedula.pack()
+    label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
+    label_cedula.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_cedula = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_cedula.grid(row=1, column=1, padx=(3, 10), pady=10)
 
-    label_nombre = tk.Label(window, text="Nombre:")
-    label_nombre.pack()
-    entry_nombre = tk.Entry(window)
-    entry_nombre.pack()
+    label_nombre = tk.Label(window, text="Nombre:", font="helvetica, 12")
+    label_nombre.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_nombre = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_nombre.grid(row=2, column=1, padx=(3, 10), pady=10)
 
-    label_apellido = tk.Label(window, text="Apellido:")
-    label_apellido.pack()
-    entry_apellido = tk.Entry(window)
-    entry_apellido.pack()
+    label_apellido = tk.Label(window, text="Apellido:", font="helvetica, 12")
+    label_apellido.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_direccion = tk.Label(window, text="Direccion:")
-    label_direccion.pack()
-    entry_direccion = tk.Entry(window)
-    entry_direccion.pack()
+    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
+    label_direccion.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_direccion.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_telefono = tk.Label(window, text="Telefono:")
-    label_telefono.pack()
-    entry_telefono = tk.Entry(window)
-    entry_telefono.pack()
+    label_telefono = tk.Label(window, text="Teléfono:", font="helvetica, 12")
+    label_telefono.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_telefono = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_telefono.grid(row=5, column=1, padx=(3, 10), pady=5)
 
-    btn_buscar = tk.Button(window, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
-    btn_buscar.pack(pady=5)
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
-    btn_crear = tk.Button(window, text="Crear Cliente", command=lambda: crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
-    btn_crear.pack(pady=5)
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Cliente", command=lambda: [crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Cliente", command=lambda: actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree))
-    btn_actualizar.pack(pady=5)
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Cliente", command=lambda: [actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    btn_inhabilitar = tk.Button(window, text="Inhabilitar Cliente", command=lambda: confirm_inhabilitar_cliente(entry_cedula, tree), state="disabled")
-    btn_inhabilitar.pack(pady=5)
+    btn_inhabilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Inhabilitar Cliente", command=lambda: [confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree), refrescar_treeview(tree)], state="disabled")
+    btn_inhabilitar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
-    btn_limpiar = tk.Button(window, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
-    btn_limpiar.pack(pady=5)
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
+    btn_limpiar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('Cedula', 'Nombre', 'Apellido','Direccion', 'Telefono')
-    tree = ttk.Treeview(window, columns=columns, show='headings')
+    columns = ('Cedula', 'Nombre', 'Apellido','Telefono', 'Direccion')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('Cedula', text='Cedula')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
-    tree.heading('Direccion', text='Direccion')
     tree.heading('Telefono', text='Telefono')
-    tree.pack(pady=10)
+    tree.heading('Direccion', text='Direccion')
+    tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
     def select(event):
         selected = tree.selection()
@@ -516,64 +578,91 @@ def ventana_gestion_clientes():
 
     mostrar_clientes(tree)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
-    btn_atras.pack(pady=10)
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_usuario, bootstyle=DANGER)
+    btn_atras.grid(row=8, column=0, columnspan=3, pady=15, sticky="n")
 
 def ventana_gestion_estudiantes():
     limpiar_ventana()
     window.title("Gestion Estudiantes")
 
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_estudiante(tree)
+
+    def confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("300x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de inhabilitar este estudiante?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree) ,confirm_window.destroy()], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
     label_bienvenida = tk.Label(window, text="Gestion Estudiantes", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(30,30))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
-    label_ID = tk.Label(window, text="ID:")
-    label_ID.pack()
-    entry_ID = tk.Entry(window)
-    entry_ID.pack()
+    label_ID = tk.Label(window, text="ID:", font="helvetica, 12")
+    label_ID.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_ID = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_ID.grid(row=1, column=1, padx=(3, 10), pady=10)
 
-    label_nombre = tk.Label(window, text="Nombre:")
-    label_nombre.pack()
-    entry_nombre = tk.Entry(window)
-    entry_nombre.pack()
+    label_nombre = tk.Label(window, text="Nombre:", font="helvetica, 12")
+    label_nombre.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_nombre = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_nombre.grid(row=2, column=1, padx=(3, 10), pady=10)
 
-    label_apellido = tk.Label(window, text="Apellido:")
-    label_apellido.pack()
-    entry_apellido = tk.Entry(window)
-    entry_apellido.pack()
+    label_apellido = tk.Label(window, text="Apellido:", font="helvetica, 12")
+    label_apellido.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:")
-    label_email.pack()
-    entry_email = tk.Entry(window)
-    entry_email.pack()
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_usuario = tk.Label(window, text="Usuario:")
-    label_usuario.pack()
-    entry_usuario = tk.Entry(window)
-    entry_usuario.pack()
+    label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
+    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=5)
 
-    btn_buscar = tk.Button(window, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
-    btn_buscar.pack(pady=5)
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
 
-    btn_crear = tk.Button(window, text="Crear Usuario", command=lambda: crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
-    btn_crear.pack(pady=5)
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Usuario", command=lambda: [crear_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
 
-    btn_actualizar = tk.Button(window, text="Actualizar Usuario", command=lambda: actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree))
-    btn_actualizar.pack(pady=5)
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Usuario", command=lambda: [actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
 
-    btn_inhabilitar = tk.Button(window, text="Inhabilitar Usuario", command=lambda: confirm_inhabilitar_estudiante(entry_ID, tree), state="disabled")
-    btn_inhabilitar.pack(pady=5)
+    btn_inhabilitar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Inhabilitar Usuario", command=lambda: [confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree), refrescar_treeview(tree)], state="disabled")
+    btn_inhabilitar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
 
-    btn_limpiar = tk.Button(window, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
-    btn_limpiar.pack(pady=5)
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
+    btn_limpiar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('ID', 'Nombre', 'Apellido', 'Email', 'Usuario')
-    tree = ttk.Treeview(window, columns=columns, show='headings')
+    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Email')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('ID', text='ID')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
-    tree.heading('Email', text='Email')
     tree.heading('Usuario', text='Usuario')
-    tree.pack(pady=10)
+    tree.heading('Email', text='Email')
+    tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
     def select(event):
         selected = tree.selection()
@@ -587,8 +676,8 @@ def ventana_gestion_estudiantes():
 
     mostrar_estudiante(tree)
 
-    btn_atras = tk.Button(window, text="Atrás", width=10, command=menu_principal_usuario)
-    btn_atras.pack(pady=10)
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_usuario, bootstyle=DANGER)
+    btn_atras.grid(row=8, column=0, columnspan=3, pady=15, sticky="n")
 
 def ventana_cambiar_contraseña(ventana_anterior):
     limpiar_ventana()

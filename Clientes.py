@@ -66,7 +66,7 @@ def actualizar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direcci
                 except Error as e:
                     messagebox.showerror("Error", f"No se pudo actualizar el cliente: {e}")
 
-def inhabilitar_cliente(entry_cedula, tree):
+def inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
     cedula = entry_cedula.get()
 
     connection = conectar_db()
@@ -82,7 +82,7 @@ def inhabilitar_cliente(entry_cedula, tree):
                     cursor.execute(query, (cedula,))
                     connection.commit()
                     messagebox.showinfo("Cliente inhabilitado con éxito.")
-                    limpiar_campos(entry_cedula, entry_cedula, entry_cedula, entry_cedula, entry_cedula)
+                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
                     mostrar_clientes(tree)
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo inhabilitar el cliente: {e}")
@@ -94,7 +94,7 @@ def mostrar_clientes(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT cedula, nombre, apellido, direccion, telefono 
+                    SELECT cedula, nombre, apellido, telefono, direccion 
                     FROM clientes 
                     WHERE estado=1
                     """
@@ -165,7 +165,7 @@ def mostrar_all(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT cedula, nombre, apellido, direccion, telefono 
+                    SELECT cedula, nombre, apellido, telefono, direccion
                     FROM clientes 
                     """
                     cursor.execute(query)
@@ -179,7 +179,7 @@ def mostrar_all(tree):
             except Error as e:
                 messagebox.showerror(f"No se pudo obtener la lista de clientes: {e}")
 
-def habilitar_cliente(entry_cedula, tree):
+def habilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
     cedula = entry_cedula.get()
 
     connection = conectar_db()
@@ -195,6 +195,7 @@ def habilitar_cliente(entry_cedula, tree):
                     cursor.execute(query, (cedula,))
                     connection.commit()
                     messagebox.showinfo("Información", "El usuario ha sido habilitado con éxito.")
+                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
                     mostrar_all(tree)
             except Error as e:
                 messagebox.showerror(f"No se pudo habilitar el usuario: {e}")
