@@ -80,7 +80,7 @@ def actualizar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, e
                 except Error as e:
                     messagebox.showerror("Error", f"No se pudo actualizar el estudiante: {e}")
 
-def inhabilitar_estudiante(entry_ID, tree):
+def inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
     ID = entry_ID.get()
 
     connection = conectar_db()
@@ -96,7 +96,7 @@ def inhabilitar_estudiante(entry_ID, tree):
                     cursor.execute(query, (ID,))
                     connection.commit()
                     messagebox.showinfo("Estudiante inhabilitado con éxito.")
-                    limpiar_campos(entry_ID, entry_ID, entry_ID, entry_ID, entry_ID)
+                    limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
                     mostrar_estudiante(tree)
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo inhabilitar al estudiante: {e}")
@@ -156,7 +156,7 @@ def mostrar_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, email, nombre_usuario 
+                    SELECT ID, nombre, apellido, nombre_usuario, email
                     FROM estudiantes 
                     WHERE estado=1
                     """
@@ -171,7 +171,7 @@ def mostrar_estudiante(tree):
             except Error as e:
                 messagebox.showerror(f"No se pudo obtener la lista de estudiantes: {e}")
 
-def habilitar_estudiante(entry_ID, tree):
+def habilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
     ID = entry_ID.get()
 
     connection = conectar_db()
@@ -187,6 +187,7 @@ def habilitar_estudiante(entry_ID, tree):
                     cursor.execute(query, (ID,))
                     connection.commit()
                     messagebox.showinfo("Información", "El estudiante ha sido habilitado con éxito.")
+                    limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
                     mostrar_estudiante(tree)
             except Error as e:
                 messagebox.showerror(f"No se pudo habilitar el estudiante: {e}")
@@ -198,7 +199,7 @@ def mostrar_all_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, email, nombre_usuario 
+                    SELECT ID, nombre, apellido, nombre_usuario, email
                     FROM estudiantes 
                     """
                     cursor.execute(query)
