@@ -95,7 +95,7 @@ def inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, 
                     """
                     cursor.execute(query, (ID,))
                     connection.commit()
-                    messagebox.showinfo("Estudiante inhabilitado con éxito.")
+                    messagebox.showinfo("Correcto", f"Estudiante inhabilitado con éxito.")
                     limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
                     mostrar_estudiante(tree)
             except Error as e:
@@ -169,7 +169,7 @@ def mostrar_estudiante(tree):
                     for row in rows:
                         tree.insert("", tk.END, values=row)
             except Error as e:
-                messagebox.showerror(f"No se pudo obtener la lista de estudiantes: {e}")
+                messagebox.showerror("Error", f"No se pudo obtener la lista de estudiantes: {e}")
 
 def habilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
     ID = entry_ID.get()
@@ -190,7 +190,7 @@ def habilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, en
                     limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
                     mostrar_estudiante(tree)
             except Error as e:
-                messagebox.showerror(f"No se pudo habilitar el estudiante: {e}")
+                messagebox.showerror("Error", f"No se pudo habilitar el estudiante: {e}")
 
 def mostrar_all_estudiante(tree):
     connection = conectar_db()
@@ -211,4 +211,4 @@ def mostrar_all_estudiante(tree):
                     for row in rows:
                         tree.insert("", tk.END, values=row)
             except Error as e:
-                messagebox.showerror(f"No se pudo obtener la lista de estudiantes: {e}")
+                messagebox.showerror("Error", f"No se pudo obtener la lista de estudiantes: {e}")

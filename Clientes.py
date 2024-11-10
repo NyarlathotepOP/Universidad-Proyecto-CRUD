@@ -33,7 +33,7 @@ def crear_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, e
                         query = "INSERT INTO clientes (cedula, nombre, apellido, direccion, telefono, estado) VALUES (%s, %s, %s, %s, %s, 1)"
                         cursor.execute(query, (cedula, nombre, apellido, direccion, telefono))
                         connection.commit()
-                        messagebox.showinfo("Cliente creado con éxito.")
+                        messagebox.showinfo("Correcto", f"Cliente creado con éxito.")
                         limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
                         mostrar_clientes(tree)
                 except Error as e:
@@ -81,7 +81,7 @@ def inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direcc
                     """
                     cursor.execute(query, (cedula,))
                     connection.commit()
-                    messagebox.showinfo("Cliente inhabilitado con éxito.")
+                    messagebox.showinfo("Correcto", f"Cliente inhabilitado con éxito.")
                     limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
                     mostrar_clientes(tree)
             except Error as e:
@@ -107,7 +107,7 @@ def mostrar_clientes(tree):
                     for row in rows:
                         tree.insert("", tk.END, values=row)
             except Error as e:
-                messagebox.showerror(f"No se pudo obtener la lista de clientes: {e}")
+                messagebox.showerror("Error", f"No se pudo obtener la lista de clientes: {e}")
 
 def seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono):
     selected_item = tree.focus()
@@ -177,7 +177,7 @@ def mostrar_all(tree):
                     for row in rows:
                         tree.insert("", tk.END, values=row)
             except Error as e:
-                messagebox.showerror(f"No se pudo obtener la lista de clientes: {e}")
+                messagebox.showerror("Error", f"No se pudo obtener la lista de clientes: {e}")
 
 def habilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
     cedula = entry_cedula.get()
@@ -198,4 +198,4 @@ def habilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccio
                     limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
                     mostrar_all(tree)
             except Error as e:
-                messagebox.showerror(f"No se pudo habilitar el usuario: {e}")
+                messagebox.showerror("Error", f"No se pudo habilitar el usuario: {e}")

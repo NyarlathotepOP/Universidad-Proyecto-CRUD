@@ -99,10 +99,10 @@ def menu_principal_admin():
     label_bienvenida = tk.Label(window, text="Sistema Principal Administrador", font=("Calibri", 25))
     label_bienvenida.pack(pady=(180,50))
 
-    btn_gestion_clientes = ttk.Button(window, text="Gestion Clientes", width=25, command=admin_gestion_clientes, bootstyle=WARNING)
+    btn_gestion_clientes = ttk.Button(window, text="Gestion Padres", width=25, command=admin_gestion_clientes, bootstyle=WARNING)
     btn_gestion_clientes.pack(pady=20)
 
-    btn_gestion_usuario = ttk.Button(window, text="Gestion Usuarios", width=25, command=admin_gestion_usuarios, bootstyle=WARNING)
+    btn_gestion_usuario = ttk.Button(window, text="Gestion Profesores", width=25, command=admin_gestion_usuarios, bootstyle=WARNING)
     btn_gestion_usuario.pack(pady=20)
 
     btn_gestion_estudiante = ttk.Button(window, text="Gestion Estudiantes", width=25, command=admin_gestion_estudiantes, bootstyle=WARNING)
@@ -126,7 +126,7 @@ def menu_principal_usuario():
     label_bienvenida = tk.Label(window, text="Bienvenido al Sistema de Gestión", font=("Calibri", 25))
     label_bienvenida.pack(pady=(180,50))
 
-    btn_gestion_clientes = ttk.Button(window, text="Gestion Clientes", width=25, command=ventana_gestion_clientes, bootstyle=WARNING)
+    btn_gestion_clientes = ttk.Button(window, text="Gestion Padres", width=25, command=ventana_gestion_clientes, bootstyle=WARNING)
     btn_gestion_clientes.pack(pady=20)
 
     btn_gestion_estudiante = ttk.Button(window, text="Gestion Estudiantes", width=25, command=ventana_gestion_estudiantes, bootstyle=WARNING)
@@ -175,7 +175,7 @@ def menu_principal_estudiante(id_estudiante):
 
 def admin_gestion_clientes():
     limpiar_ventana()
-    window.title("Gestion Clientes - Administrador")
+    window.title("Gestion Padres - Administrador")
 
     window.grid_columnconfigure(0, weight=1)
     window.grid_columnconfigure(1, weight=1)
@@ -204,7 +204,7 @@ def admin_gestion_clientes():
         btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
         btn_cancelar.pack(side="right", padx=30, pady=20)
 
-    label_bienvenida = tk.Label(window, text="Gestion Clientes - Administrador", font=("Calibri", 25))
+    label_bienvenida = tk.Label(window, text="Gestion Padres - Administrador", font=("Calibri", 25))
     label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
     label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
@@ -222,15 +222,15 @@ def admin_gestion_clientes():
     entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
     entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
-    label_direccion.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
-    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_direccion.grid(row=4, column=1, padx=(3, 10), pady=10)
-
     label_telefono = tk.Label(window, text="Teléfono:", font="helvetica, 12")
-    label_telefono.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    label_telefono.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
     entry_telefono = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_telefono.grid(row=5, column=1, padx=(3, 10), pady=5)
+    entry_telefono.grid(row=4, column=1, padx=(3, 10), pady=5)
+
+    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
+    label_direccion.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_direccion.grid(row=5, column=1, padx=(3, 10), pady=10)
 
     btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
     btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
@@ -263,7 +263,7 @@ def admin_gestion_clientes():
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
-            seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
+            seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_telefono, entry_direccion)
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -276,7 +276,7 @@ def admin_gestion_clientes():
     
 def admin_gestion_usuarios():
     limpiar_ventana()
-    window.title("Gestion Usuarios - Administrador")
+    window.title("Gestion Profesores - Administrador")
 
     window.grid_columnconfigure(0, weight=1)
     window.grid_columnconfigure(1, weight=1)
@@ -305,7 +305,7 @@ def admin_gestion_usuarios():
         btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
         btn_cancelar.pack(side="right", padx=30, pady=20)
 
-    label_bienvenida = tk.Label(window, text="Gestion Usuarios - Administrador", font=("Calibri", 25))
+    label_bienvenida = tk.Label(window, text="Gestion Profesores - Administrador", font=("Calibri", 25))
     label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
     label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
@@ -323,17 +323,17 @@ def admin_gestion_usuarios():
     entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
     entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
-    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
-    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
-
     label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
-    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    label_usuario.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
     entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=10)
+    entry_usuario.grid(row=4, column=1, padx=(3, 10), pady=10)
 
-    label_perfil = tk.Label(window, text="Perfil de Usuario:", font="helvetica, 12")
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=5, column=1, padx=(3, 10), pady=10)
+
+    label_perfil = tk.Label(window, text="Perfil:", font="helvetica, 12")
     label_perfil.grid(row=6, column=0, sticky="e", padx=(10, 3), pady=5)
     opciones_perfil = ['Administrador', 'Usuario']
     combobox_perfil = ttk.Combobox(window, values=opciones_perfil, width=37, font="helvetica, 10", state="readonly")
@@ -371,7 +371,7 @@ def admin_gestion_usuarios():
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
-            seleccionar_usuario(tree, entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil)
+            seleccionar_usuario(tree, entry_cedula, entry_nombre, entry_apellido, entry_usuario, entry_email, combobox_perfil)
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -431,15 +431,15 @@ def admin_gestion_estudiantes():
     entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
     entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
-    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
-    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
-
     label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
-    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    label_usuario.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
     entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=5)
+    entry_usuario.grid(row=4, column=1, padx=(3, 10), pady=5)
+
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=5, column=1, padx=(3, 10), pady=10)
 
     btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
     btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
@@ -472,7 +472,7 @@ def admin_gestion_estudiantes():
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
-            seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
+            seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_usuario, entry_email)
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -485,7 +485,7 @@ def admin_gestion_estudiantes():
 
 def ventana_gestion_clientes():
     limpiar_ventana()
-    window.title("Gestion Clientes")
+    window.title("Gestion Padres")
 
     window.grid_columnconfigure(0, weight=1)
     window.grid_columnconfigure(1, weight=1)
@@ -514,7 +514,7 @@ def ventana_gestion_clientes():
         btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
         btn_cancelar.pack(side="right", padx=30, pady=20)
 
-    label_bienvenida = tk.Label(window, text="Gestion Clientes", font=("Calibri", 25))
+    label_bienvenida = tk.Label(window, text="Gestion Padres", font=("Calibri", 25))
     label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
 
     label_cedula = tk.Label(window, text="Cedula:", font="helvetica, 12")
@@ -532,15 +532,15 @@ def ventana_gestion_clientes():
     entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
     entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
-    label_direccion.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
-    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_direccion.grid(row=4, column=1, padx=(3, 10), pady=10)
-
     label_telefono = tk.Label(window, text="Teléfono:", font="helvetica, 12")
-    label_telefono.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    label_telefono.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
     entry_telefono = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_telefono.grid(row=5, column=1, padx=(3, 10), pady=5)
+    entry_telefono.grid(row=4, column=1, padx=(3, 10), pady=5)
+
+    label_direccion = tk.Label(window, text="Dirección:", font="helvetica, 12")
+    label_direccion.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_direccion = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_direccion.grid(row=5, column=1, padx=(3, 10), pady=10)
 
     btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Cliente", command=lambda: buscar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono))
     btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
@@ -570,7 +570,7 @@ def ventana_gestion_clientes():
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
-            seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono)
+            seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_telefono, entry_direccion)
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -630,15 +630,15 @@ def ventana_gestion_estudiantes():
     entry_apellido = tk.Entry(window, width=40, font=("helvetica", 10))
     entry_apellido.grid(row=3, column=1, padx=(3, 10), pady=10)
 
-    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
-    label_email.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
-    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_email.grid(row=4, column=1, padx=(3, 10), pady=10)
-
     label_usuario = tk.Label(window, text="Usuario:", font="helvetica, 12")
-    label_usuario.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    label_usuario.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
     entry_usuario = tk.Entry(window, width=40, font=("helvetica", 10))
-    entry_usuario.grid(row=5, column=1, padx=(3, 10), pady=5)
+    entry_usuario.grid(row=4, column=1, padx=(3, 10), pady=5)
+
+    label_email = tk.Label(window, text="Email:", font="helvetica, 12")
+    label_email.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_email = tk.Entry(window, width=40, font=("helvetica", 10))
+    entry_email.grid(row=5, column=1, padx=(3, 10), pady=10)
 
     btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Usuario", command=lambda: buscar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario))
     btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
@@ -668,7 +668,7 @@ def ventana_gestion_estudiantes():
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
-            seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario)
+            seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_usuario, entry_email)
         else:
             btn_inhabilitar.config(state="disabled")
 
