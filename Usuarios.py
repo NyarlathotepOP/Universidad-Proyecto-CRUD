@@ -84,7 +84,7 @@ def actualizar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, 
                 except Error as e:
                     messagebox.showerror("Error", f"No se pudo actualizar el cliente: {e}")
 
-def inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
+def inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree):
     cedula = entry_cedula.get()
 
     connection = conectar_db()
@@ -99,8 +99,8 @@ def inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email,
                     """
                     cursor.execute(query, (cedula,))
                     connection.commit()
-                    messagebox.showinfo("Usuario inhabilitado con éxito.")
-                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario)
+                    messagebox.showinfo("Correcto", f"Usuario inhabilitado con éxito.")
+                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil)
                     mostrar_usuarios(tree)
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo inhabilitar al usuario: {e}")
@@ -193,9 +193,9 @@ def mostrar_usuarios(tree):
                     for row in rows:
                         tree.insert("", tk.END, values=row)
             except Error as e:
-                messagebox.showerror(f"No se pudo obtener la lista de usuarios: {e}")
+                messagebox.showerror("Error", f"No se pudo obtener la lista de usuarios: {e}")
 
-def habilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
+def habilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_email, entry_usuario, tree):
     cedula = entry_cedula.get()
 
     connection = conectar_db()
@@ -211,7 +211,7 @@ def habilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, e
                     cursor.execute(query, (cedula,))
                     connection.commit()
                     messagebox.showinfo("Información", "El usuario ha sido habilitado con éxito.")
-                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario)
+                    limpiar_campos(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_email, entry_usuario)
                     mostrar_usuarios(tree)
             except Error as e:
-                messagebox.showerror(f"No se pudo habilitar el usuario: {e}")
+                messagebox.showerror("Error", f"No se pudo habilitar el usuario: {e}")
