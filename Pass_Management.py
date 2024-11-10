@@ -45,4 +45,4 @@ def enviar_correo(destinatario, nombre_usuario, nombres, apellidos, contrasena):
             smtp.sendmail(remitente, destinatario, mensaje.as_string())
             print("Correcto", f"Correo enviado a {destinatario}")
     except Exception as e:
-        print(f"Error al enviar el correo: {e}")
+        print("Error", f"Error al enviar el correo: {e}")

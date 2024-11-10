@@ -722,28 +722,28 @@ def cambiar_contraseña(contraseña_actual, nueva_contraseña, confirmar_contras
     nombre_usuario = usuario_actual  
 
     if not contraseña_actual or not nueva_contraseña or not confirmar_contraseña:
-        messagebox.showwarning("Por favor, completa todos los campos.")
+        messagebox.showwarning("Error", f"Por favor, completa todos los campos.")
         return
 
     if nueva_contraseña != confirmar_contraseña:
-        messagebox.showerror("La nueva contraseña y la confirmación no coinciden.")
+        messagebox.showerror("Error", f"La nueva contraseña y la confirmación no coinciden.")
         return
 
     if len(nueva_contraseña) < 6:
-        messagebox.showerror("La contraseña debe tener al menos 6 caracteres.")
+        messagebox.showerror("Error", f"La contraseña debe tener al menos 6 caracteres.")
         return
 
     if obtener_credenciales(nombre_usuario, contraseña_actual):
         if actualizar_contraseña(nombre_usuario, nueva_contraseña):
-            messagebox.showinfo("Contraseña actualizada correctamente.")
+            messagebox.showinfo("Correcto", f"Contraseña actualizada correctamente.")
             if id_estudiante_actual:
                 menu_principal_estudiante(id_estudiante_actual)
             else:
                 menu_principal_usuario()
         else:
-            messagebox.showerror("Hubo un problema al actualizar la contraseña.")
+            messagebox.showerror("Error", f"Hubo un problema al actualizar la contraseña.")
     else:
-        messagebox.showerror("La contraseña actual es incorrecta.")
+        messagebox.showerror("Error", f"La contraseña actual es incorrecta.")
 
 usuario_actual = None
 id_estudiante_actual = None
