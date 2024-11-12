@@ -156,7 +156,7 @@ def mostrar_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, nombre_usuario, email
+                    SELECT ID, nombre, apellido, nombre_usuario, nivel, puntos, email
                     FROM estudiantes 
                     WHERE estado=1
                     """
@@ -168,6 +168,7 @@ def mostrar_estudiante(tree):
 
                     for row in rows:
                         tree.insert("", tk.END, values=row)
+                    tree.update()
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo obtener la lista de estudiantes: {e}")
 
@@ -199,7 +200,7 @@ def mostrar_all_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, nombre_usuario, email
+                    SELECT ID, nombre, apellido, nombre_usuario, nivel, puntos, email
                     FROM estudiantes 
                     """
                     cursor.execute(query)
@@ -210,5 +211,6 @@ def mostrar_all_estudiante(tree):
 
                     for row in rows:
                         tree.insert("", tk.END, values=row)
+                    tree.update()
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo obtener la lista de estudiantes: {e}")

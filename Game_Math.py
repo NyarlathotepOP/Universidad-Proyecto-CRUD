@@ -3,11 +3,15 @@ import json
 from random import choice
 from Conexiones_MySQL import conectar_db
 from tkinter import messagebox
+import time
 
 score = 0
 nivel = 0
 is_jumping = False
 jump_count = 10
+correct_answers_session = 0
+logro_mostrar_tiempo = 0
+logro_mostrado = {5: False, 10: False, 15: False, 30: False}
 
 def guardar_progreso(id_estudiantes, nivel, puntos):
     conexion = conectar_db()
@@ -38,6 +42,46 @@ def cargar_progreso(id_estudiantes):
         if resultado:
             return resultado
     return (0, 0)
+
+def mostrar_logro(screen, correct_answers_session):
+    logro_image = None
+    logro_text = ""
+    mostrar_duracion = 3
+
+    if correct_answers_session in logro_mostrado and not logro_mostrado[correct_answers_session]:
+        if correct_answers_session == 5:
+            logro_image = pygame.image.load("img/5pre.png")
+            logro_text = "5 Preguntas Correctas"
+        elif correct_answers_session == 10:
+            logro_image = pygame.image.load("img/10pre.png")
+            logro_text = "10 Preguntas Correctas"
+        elif correct_answers_session == 15:
+            logro_image = pygame.image.load("img/15pre.png")
+            logro_text = "15 Preguntas Correctas"
+        elif correct_answers_session == 30:
+            logro_image = pygame.image.load("img/30pre.png")
+            logro_text = "30 Preguntas Correctas"
+
+    if logro_image:
+        logro_image = pygame.transform.scale(logro_image, (200, 200))
+        image_x = (screen.get_width() - logro_image.get_width()) // 2
+        image_y = (screen.get_height() - logro_image.get_height()) // 2 - 50
+        screen.blit(logro_image, (image_x, image_y))
+
+        font = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
+        logro_alcanzado_surface = font.render("Logro Alcanzado", True, (0, 0, 0))
+        logro_alcanzado_x = (screen.get_width() - logro_alcanzado_surface.get_width()) // 2
+        logro_alcanzado_y = image_y + logro_image.get_height() + 10
+        screen.blit(logro_alcanzado_surface, (logro_alcanzado_x, logro_alcanzado_y))
+
+        logro_text_surface = font.render(logro_text, True, (0, 0, 0))
+        text_x = (screen.get_width() - logro_text_surface.get_width()) // 2
+        text_y = logro_alcanzado_y + logro_alcanzado_surface.get_height() + 10
+        screen.blit(logro_text_surface, (text_x, text_y))
+
+        logro_mostrado[correct_answers_session] = True
+        pygame.display.flip()
+        pygame.time.delay(mostrar_duracion * 1000)
 
 def pantalla_inicio(screen, screen_width, screen_height):
     start_screen_image = pygame.image.load("img/game_start.jpg")
@@ -80,7 +124,7 @@ def jump_pj(character_y, is_jumping, jump_count):
     return character_y, is_jumping, jump_count
 
 def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estudiante):
-    global score, nivel
+    global score, nivel, correct_answers_session
     pregunta_actual = choice(questions)
     question_text = pregunta_actual["pregunta"]
     opciones = pregunta_actual["opciones"]
@@ -126,6 +170,7 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
             if answer == respuesta_correcta:
                 score += 100
                 nivel +=1
+                correct_answers_session += 1
                 guardar_progreso(id_estudiante, nivel, score)
                 correct_sound.play()
                 return True
@@ -163,7 +208,7 @@ def cargar_preguntas(filepath):
     return questions
 
 def iniciar_juego(id_estudiante):
-    global score, is_jumping, jump_count, nivel
+    global score, is_jumping, jump_count, nivel, correct_answers_session
     pygame.init()
     screen_width, screen_height = 800, 600
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -172,6 +217,8 @@ def iniciar_juego(id_estudiante):
 
     nivel, score = cargar_progreso(id_estudiante)
     juego_activo = True
+    correct_answers_session = 0
+    logro_start_time = 0
 
     pantalla_inicio(screen, screen_width, screen_height)
     imagen_fondo = pygame.image.load("img/game_fondo_1.jpg")
@@ -204,8 +251,8 @@ def iniciar_juego(id_estudiante):
                     break
                 elif event.key == pygame.K_SPACE and not is_jumping:
                     is_jumping = True
-        if not running:
-            break
+        if correct_answers_session in [5, 10, 15, 30] and not logro_mostrado[correct_answers_session]:
+            mostrar_logro(screen, correct_answers_session)
 
         character_index = dibuja_pj(screen, character_images, character_x, character_y, character_index)
         character_y, is_jumping, jump_count = jump_pj(character_y, is_jumping, jump_count)
