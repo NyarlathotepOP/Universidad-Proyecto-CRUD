@@ -192,6 +192,7 @@ def mostrar_usuarios(tree):
 
                     for row in rows:
                         tree.insert("", tk.END, values=row)
+                    tree.update()
             except Error as e:
                 messagebox.showerror("Error", f"No se pudo obtener la lista de usuarios: {e}")
 

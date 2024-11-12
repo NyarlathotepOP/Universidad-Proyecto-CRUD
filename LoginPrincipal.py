@@ -151,21 +151,15 @@ def menu_principal_estudiante(id_estudiante):
     background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
     label_bienvenida = tk.Label(window, text="Bienvenido Estudiante", font=("Calibri", 25))
-    label_bienvenida.pack(pady=(180,50))
+    label_bienvenida.pack(pady=(180,80))
 
     def game_matematicas():
         window.withdraw()
         iniciar_juego(id_estudiante)
         window.deiconify()
 
-    btn_matematicas = ttk.Button(window, text="Matematicas", width=25, command=game_matematicas, bootstyle=WARNING)
+    btn_matematicas = ttk.Button(window, text="ALFAVENTURE", width=25, command=game_matematicas, bootstyle=WARNING)
     btn_matematicas.pack(pady=20)
-
-    btn_ciencias = ttk.Button(window, text="Ciencias", width=25, command="***********", bootstyle=WARNING)
-    btn_ciencias.pack(pady=20)
-
-    btn_geografia = ttk.Button(window, text="Geografia", width=25, command="***********", bootstyle=WARNING)
-    btn_geografia.pack(pady=20)
 
     btn_cambiar_contraseña = ttk.Button(window, text="Cambiar Contraseña", width=20, command=lambda: ventana_cambiar_contraseña(lambda: menu_principal_estudiante(id_estudiante_actual)), bootstyle=INFO)
     btn_cambiar_contraseña.pack(pady=(70,15))
@@ -188,6 +182,7 @@ def admin_gestion_clientes():
             for item in tree.get_children():
                 tree.delete(item)
             mostrar_all(tree)
+            tree.update()
 
     def confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
         confirm_window = tk.Toplevel(window)
@@ -259,11 +254,18 @@ def admin_gestion_clientes():
     tree.heading('Direccion', text='Direccion')
     tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
+    tree.column('Cedula', width=50, anchor='w', stretch=True)
+    tree.column('Nombre', width=120, anchor='w', stretch=True)
+    tree.column('Apellido', width=120, anchor='w', stretch=True)
+    tree.column('Telefono', width=100, anchor='w', stretch=True)
+    tree.column('Direccion', width=200, anchor='w', stretch=True)
+
     def select(event):
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
             seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_telefono, entry_direccion)
+            tree.update()
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -289,6 +291,7 @@ def admin_gestion_usuarios():
             for item in tree.get_children():
                 tree.delete(item)
             mostrar_usuarios(tree)
+            tree.update()
 
     def confirm_inhabilitar_usuario(entry_cedula, entry_nombre, entry_apellido, entry_email, entry_usuario, combobox_perfil, tree):
         confirm_window = tk.Toplevel(window)
@@ -367,11 +370,18 @@ def admin_gestion_usuarios():
     tree.heading('Email', text='Email')
     tree.grid(row=8, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
+    tree.column('Cedula', width=50, anchor='w', stretch=True)
+    tree.column('Nombre', width=120, anchor='w', stretch=True)
+    tree.column('Apellido', width=120, anchor='w', stretch=True)
+    tree.column('Usuario', width=100, anchor='w', stretch=True)
+    tree.column('Email', width=200, anchor='w', stretch=True)
+
     def select(event):
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
             seleccionar_usuario(tree, entry_cedula, entry_nombre, entry_apellido, entry_usuario, entry_email, combobox_perfil)
+            tree.update()
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -397,6 +407,7 @@ def admin_gestion_estudiantes():
             for item in tree.get_children():
                 tree.delete(item)
             mostrar_all_estudiante(tree)
+            tree.update()
 
     def confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
         confirm_window = tk.Toplevel(window)
@@ -459,20 +470,31 @@ def admin_gestion_estudiantes():
     btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
     btn_limpiar.grid(row=6, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Email')
+    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Nivel', 'Puntos', 'Email')
     tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('ID', text='ID')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
     tree.heading('Usuario', text='Usuario')
+    tree.heading('Nivel', text='Nivel')
+    tree.heading('Puntos', text='Puntos')
     tree.heading('Email', text='Email')
     tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
+
+    tree.column('ID', width=50, anchor='w', stretch=True)
+    tree.column('Nombre', width=120, anchor='w', stretch=True)
+    tree.column('Apellido', width=120, anchor='w', stretch=True)
+    tree.column('Usuario', width=100, anchor='w', stretch=True)
+    tree.column('Nivel', width=50, anchor='center', stretch=True)
+    tree.column('Puntos', width=50, anchor='center', stretch=True)
+    tree.column('Email', width=200, anchor='w', stretch=True)
 
     def select(event):
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
             seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_usuario, entry_email)
+            tree.update()
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -498,6 +520,7 @@ def ventana_gestion_clientes():
             for item in tree.get_children():
                 tree.delete(item)
             mostrar_clientes(tree)
+            tree.update()
 
     def confirm_inhabilitar_cliente(entry_cedula, entry_nombre, entry_apellido, entry_direccion, entry_telefono, tree):
         confirm_window = tk.Toplevel(window)
@@ -566,11 +589,18 @@ def ventana_gestion_clientes():
     tree.heading('Direccion', text='Direccion')
     tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
 
+    tree.column('Cedula', width=50, anchor='w', stretch=True)
+    tree.column('Nombre', width=120, anchor='w', stretch=True)
+    tree.column('Apellido', width=120, anchor='w', stretch=True)
+    tree.column('Telefono', width=100, anchor='w', stretch=True)
+    tree.column('Direccion', width=200, anchor='w', stretch=True)
+
     def select(event):
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
             seleccionar_cliente(tree, entry_cedula, entry_nombre, entry_apellido, entry_telefono, entry_direccion)
+            tree.update()
         else:
             btn_inhabilitar.config(state="disabled")
 
@@ -596,6 +626,7 @@ def ventana_gestion_estudiantes():
             for item in tree.get_children():
                 tree.delete(item)
             mostrar_estudiante(tree)
+            tree.update()
 
     def confirm_inhabilitar_estudiante(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario, tree):
         confirm_window = tk.Toplevel(window)
@@ -655,20 +686,31 @@ def ventana_gestion_estudiantes():
     btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos(entry_ID, entry_nombre, entry_apellido, entry_email, entry_usuario), tree.selection_remove(tree.selection()), btn_inhabilitar.config(state="disabled")])
     btn_limpiar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
-    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Email')
+    columns = ('ID', 'Nombre', 'Apellido', 'Usuario', 'Nivel', 'Puntos', 'Email')
     tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
     tree.heading('ID', text='ID')
     tree.heading('Nombre', text='Nombre')
     tree.heading('Apellido', text='Apellido')
     tree.heading('Usuario', text='Usuario')
+    tree.heading('Nivel', text='Nivel')
+    tree.heading('Puntos', text='Puntos')
     tree.heading('Email', text='Email')
     tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(100, 10), sticky="nsew")
+
+    tree.column('ID', width=50, anchor='w', stretch=True)
+    tree.column('Nombre', width=120, anchor='w', stretch=True)
+    tree.column('Apellido', width=120, anchor='w', stretch=True)
+    tree.column('Usuario', width=100, anchor='w', stretch=True)
+    tree.column('Nivel', width=50, anchor='center', stretch=True)
+    tree.column('Puntos', width=50, anchor='center', stretch=True)
+    tree.column('Email', width=200, anchor='w', stretch=True)
 
     def select(event):
         selected = tree.selection()
         if selected:
             btn_inhabilitar.config(state="normal")
             seleccionar_estudiante(tree, entry_ID, entry_nombre, entry_apellido, entry_usuario, entry_email)
+            tree.update()
         else:
             btn_inhabilitar.config(state="disabled")
 
