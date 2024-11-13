@@ -4,11 +4,11 @@ from PIL import Image, ImageTk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from Pass_Management import recuperar_contrasena
-from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conectar_db
+from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conectar_db, obtener_ranking
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente, limpiar_campos
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario, limpiar_campos
 from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante, limpiar_campos
-from Game_Math import iniciar_juego
+from Game import iniciar_juego
 
 def limpiar_ventana():
     for widget in window.winfo_children():
@@ -158,13 +158,54 @@ def menu_principal_estudiante(id_estudiante):
         iniciar_juego(id_estudiante)
         window.deiconify()
 
-    btn_matematicas = ttk.Button(window, text="ALFAVENTURE", width=25, command=game_matematicas, bootstyle=WARNING)
+    btn_matematicas = ttk.Button(window, text="GAME", width=25, command=game_matematicas, bootstyle=WARNING)
     btn_matematicas.pack(pady=20)
+
+    btn_ranking = ttk.Button(window, text="Ranking", width=25, command=lambda: ranking(id_estudiante), bootstyle=WARNING)
+    btn_ranking.pack(pady=20)
 
     btn_cambiar_contraseña = ttk.Button(window, text="Cambiar Contraseña", width=20, command=lambda: ventana_cambiar_contraseña(lambda: menu_principal_estudiante(id_estudiante_actual)), bootstyle=INFO)
     btn_cambiar_contraseña.pack(pady=(70,15))
 
     btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
+    btn_salir.pack(pady=15)
+
+def ranking(id_estudiante):
+    limpiar_ventana()
+    window.title("Ranking")
+
+    background_img = Image.open("img/fondo_next.png")
+    background_img = background_img.resize((window.winfo_width(), window.winfo_height()), Image.Resampling.LANCZOS)
+    background_img = ImageTk.PhotoImage(background_img)
+    
+    background_label = tk.Label(window, image=background_img)
+    background_label.image = background_img
+    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
+
+    label_bienvenida = tk.Label(window, text="Ranking Game", font=("Calibri", 25))
+    label_bienvenida.pack(pady=(180,10))
+
+    tree = ttk.Treeview(window, columns=("Posición", "Nombre", "Puntos", "Nivel"), show="headings", style="Treeview")
+    tree.heading("Posición", text="Posición")
+    tree.heading("Nombre", text="Nombre")
+    tree.heading("Puntos", text="Puntos")
+    tree.heading("Nivel", text="Nivel")
+
+    tree.column("Posición", width=80, anchor="center")
+    tree.column("Nombre", width=150, anchor="center")
+    tree.column("Puntos", width=100, anchor="center")
+    tree.column("Nivel", width=80, anchor="center")
+    tree.pack(pady=20)
+
+    ranking_data = obtener_ranking()
+    for posicion, (nombre, puntos, nivel) in enumerate(ranking_data, start=1):
+        tree.insert("", "end", values=(posicion, nombre, puntos, nivel))
+
+    btn_salir = ttk.Button(window, text="Atrás", width=15, command=lambda: menu_principal_estudiante(id_estudiante), bootstyle=DANGER)
     btn_salir.pack(pady=15)
 
 def admin_gestion_clientes():
@@ -177,6 +218,7 @@ def admin_gestion_clientes():
 
     style = ttk.Style()
     style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
 
     def refrescar_treeview(tree):
             for item in tree.get_children():
@@ -286,6 +328,7 @@ def admin_gestion_usuarios():
 
     style = ttk.Style()
     style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
 
     def refrescar_treeview(tree):
             for item in tree.get_children():
@@ -402,6 +445,7 @@ def admin_gestion_estudiantes():
 
     style = ttk.Style()
     style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
 
     def refrescar_treeview(tree):
             for item in tree.get_children():
@@ -515,6 +559,7 @@ def ventana_gestion_clientes():
 
     style = ttk.Style()
     style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
 
     def refrescar_treeview(tree):
             for item in tree.get_children():
@@ -621,6 +666,7 @@ def ventana_gestion_estudiantes():
 
     style = ttk.Style()
     style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
 
     def refrescar_treeview(tree):
             for item in tree.get_children():
