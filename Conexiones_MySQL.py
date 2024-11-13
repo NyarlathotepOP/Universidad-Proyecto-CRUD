@@ -154,3 +154,20 @@ def actualizar_contraseña(nombre_usuario, nueva_contraseña):
                 except Error as e:
                     print(f"Error al actualizar la contraseña: {e}")
                     return False
+                
+def obtener_ranking():
+    connection = conectar_db()
+    if connection:
+        cursor = connection.cursor()
+        consulta = """
+        SELECT nombre_usuario, puntos, nivel 
+        FROM estudiantes 
+        ORDER BY puntos DESC, nivel DESC;
+        """
+        cursor.execute(consulta)
+        resultados = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return resultados
+    else:
+        return []

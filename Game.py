@@ -1,5 +1,6 @@
 import pygame
 import json
+import random
 from random import choice
 from Conexiones_MySQL import conectar_db
 from tkinter import messagebox
@@ -46,7 +47,7 @@ def cargar_progreso(id_estudiantes):
 def mostrar_logro(screen, correct_answers_session):
     logro_image = None
     logro_text = ""
-    mostrar_duracion = 3
+    mostrar_duracion = 2
 
     if correct_answers_session in logro_mostrado and not logro_mostrado[correct_answers_session]:
         if correct_answers_session == 5:
@@ -94,7 +95,7 @@ def pantalla_inicio(screen, screen_width, screen_height):
     text = font_start.render("START", True, (0, 0, 0))
     screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2.7 - text.get_height() // 2))
 
-    start_text = font_text.render("Matematicas", True, (0, 0, 0))
+    start_text = font_text.render("Preguntas Basicas", True, (0, 0, 0))
     screen.blit(start_text, (screen_width // 2 - start_text.get_width() // 2, screen_height - 230))
 
     pygame.display.flip()
@@ -116,8 +117,8 @@ def jump_pj(character_y, is_jumping, jump_count):
     if is_jumping:
         if jump_count >= -10:
             neg = 1 if jump_count >= 0 else -1
-            character_y -= (jump_count ** 2) * 0.5 * neg
-            jump_count -= 1
+            character_y -= (jump_count ** 2) * 0.3 * neg
+            jump_count -= 0.5
         else:
             jump_count = 10
             is_jumping = False
@@ -133,23 +134,50 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
     answer = None
 
     imagen_fondo = pygame.image.load("img/game_fondo_1.jpg")
-
     overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     overlay.fill((255, 255, 255, 80))
 
     font = pygame.font.Font(None, 36)
-    question_surface = font.render(question_text, True, (0, 0, 0))
+
+    def wrap_text(text, font, max_width):
+        words = text.split(" ")
+        lines = []
+        current_line = ""
+        
+        for word in words:
+            test_line = current_line + (word if current_line == "" else " " + word)
+            test_width = font.size(test_line)[0]
+            
+            if test_width <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+                
+        lines.append(current_line)
+        return lines
+    
+    max_width = screen.get_width() - 200
+    wrapped_question = wrap_text(question_text, font, max_width)
+
+    question_y_pos = 200
+    question_surfaces = [font.render(line, True, (0, 0, 0)) for line in wrapped_question]
+
+    options_start_y = question_y_pos + len(question_surfaces) * 40 + 20
+
     option_surfaces = [font.render(f"{i+1}. {opt}", True, (0, 0, 0)) for i, opt in enumerate(opciones)]
+
 
     while attempts > 0:
         screen.blit(imagen_fondo, (0, 0))
         screen.blit(overlay, (0, 0))
-        
-        screen.blit(question_surface, (100, 200))
+
+        for idx, question_surface in enumerate(question_surfaces):
+            screen.blit(question_surface, (100, question_y_pos + idx * 40))
 
         for idx, opt_surface in enumerate(option_surfaces):
-            screen.blit(opt_surface, (100, 250 + idx * 40))
-        
+            screen.blit(opt_surface, (100, options_start_y  + idx * 40))
+
         pygame.display.flip()
 
         answer = None
@@ -169,7 +197,7 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
         if answer:
             if answer == respuesta_correcta:
                 score += 100
-                nivel +=1
+                nivel += 1
                 correct_answers_session += 1
                 guardar_progreso(id_estudiante, nivel, score)
                 correct_sound.play()
@@ -180,6 +208,7 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
                 answer = None
 
     return False
+
 
 def mostrar_puntuacion(screen, score, nivel):
     font_score = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
@@ -207,18 +236,65 @@ def cargar_preguntas(filepath):
         print("Error: El archivo de preguntas no se encuentra.")
     return questions
 
+class Enemigo:
+    def __init__(self, image, screen_width, screen_height):
+        self.image = image
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.x = screen_width + self.width
+        self.y = random.randint(screen_height - 100, screen_height - 30)
+        self.speed = random.randint(5, 10)
+
+    def mover(self):
+        self.x -= self.speed
+
+    def dibujar(self, screen):
+        screen.blit(self.image, (self.x, self.y))
+
+    def fuera_de_pantalla(self):
+        return self.x < -self.width
+
+    def colisiona(self, character_x, character_y, character_width, character_height):
+        margen = 40
+        return (
+            self.x + margen < character_x + character_width and
+            self.x + self.width - margen > character_x and
+            self.y + margen < character_y + character_height and
+            self.y + self.height - margen > character_y
+        )
+
+def manejar_enemigos(screen, enemigos, character_x, character_y, character_width, character_height, screen_width, screen_height, id_estudiante):
+    global score
+    for enemigo in enemigos[:]:
+        enemigo.mover()
+        enemigo.dibujar(screen)
+        if enemigo.colisiona(character_x, character_y, character_width, character_height):
+            score -= 100
+            enemigos.remove(enemigo)
+            if score <= 0:
+                game_over(screen, screen_width, screen_height, id_estudiante)
+                return False
+        if enemigo.fuera_de_pantalla():
+            enemigos.remove(enemigo)
+    return True
+
+enemigo_images = [pygame.image.load(f"img/enemigo{i}.png") for i in range(1, 9)]
+enemigos = []
+enemigo_timer = 0
+
 def iniciar_juego(id_estudiante):
     global score, is_jumping, jump_count, nivel, correct_answers_session
     pygame.init()
     screen_width, screen_height = 800, 600
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Matematicas")
+    pygame.display.set_caption("GAME")
     clock = pygame.time.Clock()
 
     nivel, score = cargar_progreso(id_estudiante)
     juego_activo = True
     correct_answers_session = 0
     logro_start_time = 0
+    enemigo_timer = 0
 
     pantalla_inicio(screen, screen_width, screen_height)
     imagen_fondo = pygame.image.load("img/game_fondo_1.jpg")
@@ -229,7 +305,7 @@ def iniciar_juego(id_estudiante):
     is_jumping, jump_count = False, 10
     character_velocity = 5
 
-    questions = cargar_preguntas("questions/Math.json")
+    questions = cargar_preguntas("questions/Questions.json")
 
     pygame.mixer.init()
     respuesta_correcta_sound = pygame.mixer.Sound("music/correct.mp3")
@@ -251,6 +327,16 @@ def iniciar_juego(id_estudiante):
                     break
                 elif event.key == pygame.K_SPACE and not is_jumping:
                     is_jumping = True
+
+        enemigo_timer += 1
+        if enemigo_timer >= 60:
+            enemigo_image = random.choice(enemigo_images)
+            enemigos.append(Enemigo(enemigo_image, screen_width, screen_height))
+            enemigo_timer = 0
+
+        if not manejar_enemigos(screen, enemigos, character_x, character_y, character_images[0].get_width(), character_images[0].get_height(), screen_width, screen_height, id_estudiante):
+            running = False
+
         if correct_answers_session in [5, 10, 15, 30] and not logro_mostrado[correct_answers_session]:
             mostrar_logro(screen, correct_answers_session)
 
