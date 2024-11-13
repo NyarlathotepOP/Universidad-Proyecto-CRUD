@@ -156,7 +156,7 @@ def mostrar_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, nombre_usuario, nivel, puntos, email
+                    SELECT ID, nombre, apellido, nombre_usuario, email, nivel, puntos
                     FROM estudiantes 
                     WHERE estado=1
                     """
@@ -200,7 +200,7 @@ def mostrar_all_estudiante(tree):
             try:
                 with connection.cursor() as cursor:
                     query = """
-                    SELECT ID, nombre, apellido, nombre_usuario, nivel, puntos, email
+                    SELECT ID, nombre, apellido, nombre_usuario, email, nivel, puntos
                     FROM estudiantes 
                     """
                     cursor.execute(query)
