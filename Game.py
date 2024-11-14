@@ -18,6 +18,9 @@ escenarios = [
     "img/game_fondo_1.jpg",
     "img/game_fondo_2.jpg",
     "img/game_fondo_3.jpg",
+    "img/game_fondo_4.jpg",
+    "img/game_fondo_5.jpg",
+    "img/game_fondo_6.jpg",
 ]
 
 def cargar_fondo(nivel, screen_width, screen_height):
@@ -94,8 +97,56 @@ def mostrar_logro(screen, correct_answers_session):
 
         logro_mostrado[correct_answers_session] = True
         pygame.display.flip()
-        pygame.time.delay(mostrar_duracion * 1000)
+
+        start_time = pygame.time.get_ticks()
+        while pygame.time.get_ticks() - start_time < mostrar_duracion * 1000:
+            pygame.event.pump()
+            pygame.time.wait(30)
         
+        mostrar_gif_logro(screen)
+
+def mostrar_gif_logro(screen):
+    global score
+    gif_images = [pygame.image.load(f"img/star_{i}.png") for i in range(1, 7)]
+    gif_rect = gif_images[0].get_rect()
+    gif_rect.y = screen.get_height() // 2 - gif_rect.height // 2
+    gif_rect.x = screen.get_width()
+
+    gif_speed = 10
+    gif_active = True
+    gif_frame = 0
+    total_frames = len(gif_images)
+
+    surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+
+    fondo = cargar_fondo(nivel, screen.get_width(), screen.get_height())
+
+    while gif_active:
+        surface.fill((0, 0, 0, 0))
+        surface.blit(fondo, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                gif_active = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if gif_rect.collidepoint(event.pos):
+                    score += 500
+                    gif_active = False
+
+        gif_rect.x -= gif_speed
+        if gif_rect.x + gif_rect.width < 0:
+            gif_active = False
+
+        surface.blit(gif_images[gif_frame], gif_rect)
+
+        gif_frame = (gif_frame + 1) % total_frames
+
+        screen.blit(surface, (0, 0))
+        pygame.display.flip()
+        pygame.time.wait(30)
+
+    return score
+
 def pantalla_inicio(screen, screen_width, screen_height):
     start_screen_image = pygame.image.load("img/game_start.jpg")
     start_screen_image = pygame.transform.scale(start_screen_image, (screen_width, screen_height))
@@ -284,7 +335,7 @@ def manejar_enemigos(screen, enemigos, character_x, character_y, character_width
         enemigo.mover()
         enemigo.dibujar(screen)
         if enemigo.colisiona(character_x, character_y, character_width, character_height):
-            score -= 100
+            score -= 300
             enemigos.remove(enemigo)
             if score <= 0:
                 game_over(screen, screen_width, screen_height, id_estudiante)
@@ -301,7 +352,7 @@ def iniciar_juego(id_estudiante):
     global score, is_jumping, jump_count, nivel, correct_answers_session
     pygame.init()
     screen_width, screen_height = 1100, 500
-    screen = pygame.display.set_mode((screen_width, screen_height))
+    screen = pygame.display.set_mode((screen_width, screen_height), pygame.SRCALPHA)
     pygame.display.set_caption("GAME")
     clock = pygame.time.Clock()
 
