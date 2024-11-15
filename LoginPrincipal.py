@@ -8,6 +8,7 @@ from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conec
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente, limpiar_campos_clientes
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario, limpiar_campos_usuarios
 from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante, limpiar_campos, mostrar_progreso_all, seleccionar_progreso, buscar_progreso, limpiar_progreso, actualizar_progreso, borrar_progreso
+from preguntas import limpiar_campos_pregunta, mostrar_preguntas, seleccionar_preguntas, buscar_pregunta, crear_pregunta, actualizar_pregunta, borrar_pregunta
 from Game import iniciar_juego
 
 def limpiar_ventana():
@@ -132,6 +133,9 @@ def menu_principal_usuario():
     btn_gestion_clientes = ttk.Button(window, text="Progreso Estudiantes", width=25, command=ventana_progreso_estudiantes, bootstyle=WARNING)
     btn_gestion_clientes.pack(pady=20)
 
+    btn_gestion_clientes = ttk.Button(window, text="Preguntas GAME", width=25, command=ventana_preguntas_game, bootstyle=WARNING)
+    btn_gestion_clientes.pack(pady=20)
+
     btn_gestion_clientes = ttk.Button(window, text="Gestion Padres", width=25, command=ventana_gestion_clientes, bootstyle=WARNING)
     btn_gestion_clientes.pack(pady=20)
 
@@ -175,6 +179,120 @@ def menu_principal_estudiante(id_estudiante):
 
     btn_salir = ttk.Button(window, text="Cerrar Sesion", width=15, command=login_principal, bootstyle=DANGER)
     btn_salir.pack(pady=15)
+
+def ventana_preguntas_game():
+    limpiar_ventana()
+    window.title("Preguntas Game")
+
+    window.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_columnconfigure(2, weight=1)
+
+    style = ttk.Style()
+    style.configure("Treeview", font=("helvetica", 11))
+    style.configure("Treeview.Heading", font=("helvetica", 12, "bold"))
+
+    def refrescar_treeview(tree):
+            for item in tree.get_children():
+                tree.delete(item)
+            mostrar_preguntas(tree)
+            tree.update()
+
+    def confirm_borrar_pregunta(entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta, tree):
+        confirm_window = tk.Toplevel(window)
+        confirm_window.title("Ventana de Confirmacion")
+        confirm_window.geometry("350x150")
+        confirm_window.grab_set()
+
+        label_confirmar = tk.Label(confirm_window, text="¿Está seguro de borrar esta pregunta?", font=("Calibri", 13))
+        label_confirmar.pack(pady=(20, 10))
+
+        btn_confirmar = ttk.Button(confirm_window, text="Sí", command=lambda: [borrar_pregunta(entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta), refrescar_treeview(tree), confirm_window.destroy()], width=10, bootstyle=SUCCESS)
+        btn_confirmar.pack(side="left", padx=30, pady=20)
+
+        btn_cancelar = ttk.Button(confirm_window, text="No", command=confirm_window.destroy, width=10, bootstyle=DANGER)
+        btn_cancelar.pack(side="right", padx=30, pady=20)
+
+    label_bienvenida = tk.Label(window, text="Preguntas Game", font=("Calibri", 25))
+    label_bienvenida.grid(row=0, column=0, columnspan=3, pady=(30, 30), sticky="n")
+
+    label_pregunta = tk.Label(window, text="Pregunta:", font="helvetica, 12")
+    label_pregunta.grid(row=1, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_pregunta = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_pregunta.grid(row=1, column=1, padx=(3, 10), pady=10)
+
+    label_opcion1 = tk.Label(window, text="Opcion 1:", font="helvetica, 12")
+    label_opcion1.grid(row=2, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_opcion1 = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_opcion1.grid(row=2, column=1, padx=(3, 10), pady=10)
+
+    label_opcion2 = tk.Label(window, text="Opcion 2:", font="helvetica, 12")
+    label_opcion2.grid(row=3, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_opcion2 = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_opcion2.grid(row=3, column=1, padx=(3, 10), pady=10)
+
+    label_opcion3 = tk.Label(window, text="Opcion 3:", font="helvetica, 12")
+    label_opcion3.grid(row=4, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_opcion3 = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_opcion3.grid(row=4, column=1, padx=(3, 10), pady=5)
+
+    label_opcion4 = tk.Label(window, text="Opcion 4:", font="helvetica, 12")
+    label_opcion4.grid(row=5, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_opcion4 = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_opcion4.grid(row=5, column=1, padx=(3, 10), pady=10)
+
+    label_correcta = tk.Label(window, text="Respuesta Correcta:", font="helvetica, 12")
+    label_correcta.grid(row=6, column=0, sticky="e", padx=(10, 3), pady=5)
+    entry_correcta = tk.Entry(window, width=60, font=("helvetica", 10))
+    entry_correcta.grid(row=6, column=1, padx=(3, 10), pady=10)
+
+    btn_buscar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Buscar Pregunta", command=lambda: buscar_pregunta(tree, entry_pregunta))
+    btn_buscar.grid(row=1, column=2, padx=10, pady=10, sticky="w")
+
+    btn_crear = ttk.Button(window, width=20, bootstyle=LIGHT, text="Crear Pregunta", command=lambda: [crear_pregunta(usuario_actual, entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta, tree), refrescar_treeview(tree)])
+    btn_crear.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+
+    btn_actualizar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Actualizar Pregunta", command=lambda: [actualizar_pregunta(usuario_actual, entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta, tree), refrescar_treeview(tree)])
+    btn_actualizar.grid(row=3, column=2, padx=10, pady=10, sticky="w")
+
+    btn_eliminar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Eliminar Pregunta", command=lambda: [confirm_borrar_pregunta(entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta, tree), refrescar_treeview(tree)], state="disabled")
+    btn_eliminar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
+
+    btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda: [limpiar_campos_pregunta(entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta), tree.selection_remove(tree.selection()), refrescar_treeview(tree), btn_eliminar.config(state="disabled")])
+    btn_limpiar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
+
+    columns = ('Pregunta', 'Opcion 1', 'Opcion 2', 'Opcion 3', 'Opcion 4', 'Correcta')
+    tree = ttk.Treeview(window, columns=columns, show='headings', style="Treeview")
+    tree.heading('Pregunta', text='Pregunta')
+    tree.heading('Opcion 1', text='Opcion 1')
+    tree.heading('Opcion 2', text='Opcion 2')
+    tree.heading('Opcion 3', text='Opcion 3')
+    tree.heading('Opcion 4', text='Opcion 4')
+    tree.heading('Correcta', text='Correcta')
+    tree.grid(row=7, column=0, columnspan=3, padx=10, pady=(50, 10), sticky="nsew")
+
+    tree.column('Pregunta', width=100, anchor='w', stretch=True)
+    tree.column('Opcion 1', width=100, anchor='w', stretch=True)
+    tree.column('Opcion 2', width=100, anchor='w', stretch=True)
+    tree.column('Opcion 3', width=100, anchor='w', stretch=True)
+    tree.column('Opcion 4', width=100, anchor='w', stretch=True)
+    tree.column('Correcta', width=100, anchor='w', stretch=True)
+
+    def select(event):
+        selected = tree.selection()
+        if selected:
+            btn_eliminar.config(state="normal")
+            seleccionar_preguntas(tree, entry_pregunta, entry_opcion1, entry_opcion2, entry_opcion3, entry_opcion4, entry_correcta)            
+            tree.update()
+        else:
+            btn_eliminar.config(state="disabled")
+
+    tree.bind("<<TreeviewSelect>>", select)
+
+    mostrar_preguntas(tree)
+
+    btn_atras = ttk.Button(window, text="Atrás", width=10, command=menu_principal_usuario, bootstyle=DANGER) 
+    btn_atras.grid(row=8, column=0, columnspan=3, pady=15, sticky="n")
 
 def ranking(id_estudiante):
     limpiar_ventana()

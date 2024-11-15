@@ -59,6 +59,16 @@ def cargar_progreso(id_estudiantes):
             return resultado
     return (0, 0)
 
+def obtener_preguntas(cantidad=30):
+    conexion = conectar_db()
+    if  conexion:
+        cursor = conexion.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM preguntas ORDER BY RAND() LIMIT %s", (cantidad,))
+        preguntas = cursor.fetchall()
+        conexion.close()
+        if preguntas:
+            return preguntas
+
 def mostrar_logro(screen, correct_answers_session):
     logro_image = None
     logro_text = ""
@@ -187,11 +197,23 @@ def jump_pj(character_y, is_jumping, jump_count):
             is_jumping = False
     return character_y, is_jumping, jump_count
 
-def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height):
+def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height, cantidad_preguntas=10):
     global score, nivel, correct_answers_session
-    pregunta_actual = choice(questions)
-    question_text = pregunta_actual["pregunta"]
-    opciones = pregunta_actual["opciones"]
+
+    preguntas_db = obtener_preguntas(cantidad=cantidad_preguntas)
+    if not preguntas_db:
+        print("No se pudieron cargar las preguntas desde la base de datos.")
+        return False
+
+    pregunta_actual = random.choice(preguntas_db)
+
+    question_text = pregunta_actual["preguntas"]
+    opciones = [
+        pregunta_actual["opcion_1"],
+        pregunta_actual["opcion_2"],
+        pregunta_actual["opcion_3"],
+        pregunta_actual["opcion_4"]
+    ]
     respuesta_correcta = pregunta_actual["respuesta_correcta"]
     attempts = 2
     answer = None
@@ -219,7 +241,7 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
                 
         lines.append(current_line)
         return lines
-    
+
     max_width = screen.get_width() - 130
     wrapped_question = wrap_text(question_text, font, max_width)
 
@@ -229,7 +251,6 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
     options_start_y = question_y_pos + len(question_surfaces) * 40 + 20
 
     option_surfaces = [font.render(f"{i+1}. {opt}", True, (0, 0, 0)) for i, opt in enumerate(opciones)]
-
 
     while attempts > 0:
         screen.blit(imagen_fondo, (0, 0))
@@ -275,6 +296,7 @@ def mostrar_pregunta(screen, questions, correct_sound, incorrect_sound, id_estud
                 answer = None
 
     return False
+
 
 def mostrar_puntuacion(screen, score, nivel):
     font_score = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
@@ -371,8 +393,6 @@ def iniciar_juego(id_estudiante):
     is_jumping, jump_count = False, 10
     character_velocity = 5
 
-    questions = cargar_preguntas("questions/Questions.json")
-
     pygame.mixer.init()
     respuesta_correcta_sound = pygame.mixer.Sound("music/correct.mp3")
     respuesta_incorrecta_sound = pygame.mixer.Sound("music/wronganswer.mp3")
@@ -413,7 +433,7 @@ def iniciar_juego(id_estudiante):
 
         distance += 1
         if distance % 200 == 0:
-            if not mostrar_pregunta(screen, questions, respuesta_correcta_sound, respuesta_incorrecta_sound, id_estudiante, screen_width, screen_height):
+            if not mostrar_pregunta(screen, respuesta_correcta_sound, respuesta_incorrecta_sound, id_estudiante, screen_width, screen_height):
                 game_over(screen, screen_width, screen_height, id_estudiante)
                 running = False
             distance += 200
