@@ -8,7 +8,7 @@ from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conec
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente, limpiar_campos_clientes
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario, limpiar_campos_usuarios
 from Estudiantes import buscar_estudiante, habilitar_estudiante, inhabilitar_estudiante, actualizar_estudiante, mostrar_estudiante, seleccionar_estudiante, crear_estudiante, mostrar_all_estudiante, limpiar_campos, mostrar_progreso_all, seleccionar_progreso, buscar_progreso, limpiar_progreso, actualizar_progreso, borrar_progreso
-from preguntas import limpiar_campos_pregunta, mostrar_preguntas, seleccionar_preguntas, buscar_pregunta, crear_pregunta, actualizar_pregunta, borrar_pregunta
+from Preguntas import limpiar_campos_pregunta, mostrar_preguntas, seleccionar_preguntas, buscar_pregunta, crear_pregunta, actualizar_pregunta, borrar_pregunta
 from Game import iniciar_juego
 
 def limpiar_ventana():
