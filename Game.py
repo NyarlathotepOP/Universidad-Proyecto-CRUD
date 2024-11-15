@@ -197,7 +197,7 @@ def jump_pj(character_y, is_jumping, jump_count):
             is_jumping = False
     return character_y, is_jumping, jump_count
 
-def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height, cantidad_preguntas=10):
+def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height, cantidad_preguntas=30):
     global score, nivel, correct_answers_session
 
     preguntas_db = obtener_preguntas(cantidad=cantidad_preguntas)
