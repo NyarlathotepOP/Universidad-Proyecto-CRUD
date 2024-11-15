@@ -160,9 +160,10 @@ def obtener_ranking():
     if connection:
         cursor = connection.cursor()
         consulta = """
-        SELECT nombre_usuario, puntos, nivel 
-        FROM estudiantes 
-        ORDER BY puntos DESC, nivel DESC;
+        SELECT estudiantes.nombre_usuario, progreso.puntos, progreso.nivel
+        FROM estudiantes
+        JOIN progreso ON progreso.id_estudiantes = estudiantes.id_estudiantes
+        ORDER BY progreso.puntos DESC, progreso.nivel DESC;
         """
         cursor.execute(consulta)
         resultados = cursor.fetchall()

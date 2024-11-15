@@ -34,9 +34,9 @@ def guardar_progreso(id_estudiantes, nivel, puntos):
     if conexion:
         cursor = conexion.cursor()
         query = """
-            UPDATE estudiantes
+            UPDATE progreso
             SET nivel = %s, puntos = %s
-            WHERE ID = %s
+            WHERE id_estudiantes = %s
         """
         cursor.execute(query, (nivel, puntos, id_estudiantes))
         conexion.commit()
@@ -49,7 +49,7 @@ def cargar_progreso(id_estudiantes):
         cursor = conexion.cursor()
         query = """
         SELECT nivel, puntos 
-        FROM estudiantes WHERE ID = %s
+        FROM progreso WHERE id_estudiantes = %s
         """
         cursor.execute(query, (id_estudiantes,))
         resultado = cursor.fetchone()
