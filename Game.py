@@ -59,7 +59,7 @@ def cargar_progreso(id_estudiantes):
             return resultado
     return (0, 0)
 
-def obtener_preguntas(cantidad=30):
+def obtener_preguntas(cantidad=100):
     conexion = conectar_db()
     if  conexion:
         cursor = conexion.cursor(dictionary=True)
@@ -157,29 +157,99 @@ def mostrar_gif_logro(screen):
 
     return score
 
-def pantalla_inicio(screen, screen_width, screen_height):
+def pantalla_inicio(screen, screen_width, screen_height, id_estudiante):
     start_screen_image = pygame.image.load("img/game_start.jpg")
     start_screen_image = pygame.transform.scale(start_screen_image, (screen_width, screen_height))
     screen.blit(start_screen_image, (0, 0))
 
     font_start = pygame.font.Font("font/Eight-Bit Madness.ttf", 100)
-    font_text = pygame.font.Font("font/Eight-Bit Madness.ttf", 75)
+    font_text = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
 
     text = font_start.render("START", True, (0, 0, 0))
-    screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2.7 - text.get_height() // 2))
+    screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 3 - text.get_height() // 2))
 
-    start_text = font_text.render("Clases 5° a 7°", True, (0, 0, 0))
-    screen.blit(start_text, (screen_width // 2 - start_text.get_width() // 2, screen_height - 230))
+    difficulty_text = font_text.render("Seleccionar Dificultad", True, (0, 0, 0))
+    screen.blit(difficulty_text, (screen_width // 2 - difficulty_text.get_width() // 2, screen_height // 2 - difficulty_text.get_height() // 2 - 50))
+
+    easy_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 20, 300, 50)
+    medium_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 80, 300, 50)
+    hard_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 140, 300, 50)
+
+    pygame.draw.rect(screen, (0, 255, 0), easy_button)
+    pygame.draw.rect(screen, (255, 255, 0), medium_button)
+    pygame.draw.rect(screen, (255, 0, 0), hard_button)
+
+    easy_text = font_text.render("FACIL", True, (0, 0, 0))
+    medium_text = font_text.render("MEDIO", True, (0, 0, 0))
+    hard_text = font_text.render("DIFICIL", True, (0, 0, 0))
+
+    screen.blit(easy_text, (screen_width // 2 - easy_text.get_width() // 2, screen_height // 2 + 30))
+    screen.blit(medium_text, (screen_width // 2 - medium_text.get_width() // 2, screen_height // 2 + 90))
+    screen.blit(hard_text, (screen_width // 2 - hard_text.get_width() // 2, screen_height // 2 + 150))
 
     pygame.display.flip()
 
-    waiting = True
-    while waiting:
+    seleccionada = None
+    while seleccionada is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                return None, None
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                waiting = False
+                if easy_button.collidepoint(event.pos):
+                    seleccionada = "facil"
+                    velocidad = 1
+                    dificultad = "Facil"
+                elif medium_button.collidepoint(event.pos):
+                    seleccionada = "medio"
+                    velocidad = 1.5
+                    dificultad = "Medio"
+                elif hard_button.collidepoint(event.pos):
+                    seleccionada = "dificil"
+                    velocidad = 2
+                    dificultad = "Dificil"
+
+    conexion = conectar_db()
+    if conexion:
+        cursor = conexion.cursor()
+        query = """
+            UPDATE nivel_dificultad
+            SET velocidad = %s, dificultad = %s, fecha_actualizacion = NOW()
+            WHERE id_estudiantes = %s
+        """
+        cursor.execute(query, (velocidad, dificultad, id_estudiante))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+def recuperar_dificultad(id_estudiante):
+    conexion = conectar_db()
+    if conexion:
+        cursor = conexion.cursor()
+        query = "SELECT dificultad, velocidad FROM nivel_dificultad WHERE id_estudiantes = %s ORDER BY fecha_actualizacion DESC LIMIT 1"
+        cursor.execute(query, (id_estudiante,))
+        resultado = cursor.fetchone()
+        cursor.close()
+        conexion.close()
+
+        if resultado:
+            dificultad = resultado[0]
+            velocidad = resultado[1]
+            return dificultad, velocidad
+        
+def guardar_tiempo_juego(id_estudiante, tiempo_juego):
+    conexion = conectar_db()
+    if conexion:
+        cursor = conexion.cursor()
+        query = """
+            UPDATE nivel_dificultad
+            SET tiempo_juego = %s, fecha_actualizacion = NOW()
+            WHERE id_estudiantes = %s
+        """
+        cursor.execute(query, (tiempo_juego, id_estudiante))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
 
 def dibuja_pj(screen, character_images, x, y, character_index):
     screen.blit(character_images[character_index], (x, y))
@@ -197,7 +267,7 @@ def jump_pj(character_y, is_jumping, jump_count):
             is_jumping = False
     return character_y, is_jumping, jump_count
 
-def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height, cantidad_preguntas=30):
+def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, screen_width, screen_height, cantidad_preguntas=100):
     global score, nivel, correct_answers_session
 
     preguntas_db = obtener_preguntas(cantidad=cantidad_preguntas)
@@ -297,7 +367,6 @@ def mostrar_pregunta(screen, correct_sound, incorrect_sound, id_estudiante, scre
 
     return False
 
-
 def mostrar_puntuacion(screen, score, nivel):
     font_score = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
     score_text = font_score.render(f"Score: {score}", True, (0, 0, 0))
@@ -314,15 +383,6 @@ def game_over(screen, screen_width, screen_height, id_estudiante):
     screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2 - text.get_height() // 2))
     pygame.display.flip()
     pygame.time.delay(2000)
-
-def cargar_preguntas(filepath):
-    questions = []
-    try:
-        with open(filepath) as file:
-            questions = json.load(file)
-    except FileNotFoundError:
-        print("Error: El archivo de preguntas no se encuentra.")
-    return questions
 
 class Enemigo:
     def __init__(self, image, screen_width, screen_height):
@@ -357,7 +417,7 @@ def manejar_enemigos(screen, enemigos, character_x, character_y, character_width
         enemigo.mover()
         enemigo.dibujar(screen)
         if enemigo.colisiona(character_x, character_y, character_width, character_height):
-            score -= 300
+            score -= 100
             enemigos.remove(enemigo)
             if score <= 0:
                 game_over(screen, screen_width, screen_height, id_estudiante)
@@ -382,8 +442,19 @@ def iniciar_juego(id_estudiante):
     juego_activo = True
     correct_answers_session = 0
     enemigo_timer = 0
+    enemigo_spawn_rate = 60
+    tiempo_inicio = time.time()
 
-    pantalla_inicio(screen, screen_width, screen_height)
+    pantalla_inicio(screen, screen_width, screen_height, id_estudiante)
+
+    dificultad, velocidad = recuperar_dificultad(id_estudiante)
+
+    if dificultad == "Facil":
+        enemigo_spawn_rate = 60
+    elif dificultad == "Medio":
+        enemigo_spawn_rate = 50
+    elif dificultad == "Dificil":
+        enemigo_spawn_rate = 40
 
     fondo = cargar_fondo(nivel, screen_width, screen_height)
 
@@ -417,7 +488,7 @@ def iniciar_juego(id_estudiante):
                     is_jumping = True
 
         enemigo_timer += 1
-        if enemigo_timer >= 60:
+        if enemigo_timer >= enemigo_spawn_rate:
             enemigo_image = random.choice(enemigo_images)
             enemigos.append(Enemigo(enemigo_image, screen_width, screen_height))
             enemigo_timer = 0
@@ -440,7 +511,11 @@ def iniciar_juego(id_estudiante):
 
         mostrar_puntuacion(screen, score, nivel)
 
+        tiempo_fin = time.time()
+        tiempo_juego = tiempo_fin - tiempo_inicio
+        guardar_tiempo_juego(id_estudiante, tiempo_juego)
+
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(30 * velocidad)
 
     pygame.quit()
