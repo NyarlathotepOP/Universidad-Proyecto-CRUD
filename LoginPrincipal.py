@@ -3,7 +3,7 @@ from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from Pass_Management import recuperar_contrasena
+from Pass_Management import recuperar_contrasena, enviar_info_seleccionada
 from Conexiones_MySQL import obtener_credenciales, actualizar_contraseña, conectar_db, obtener_ranking
 from Clientes import mostrar_clientes, crear_cliente, actualizar_cliente, inhabilitar_cliente, seleccionar_cliente, buscar_cliente, mostrar_all, habilitar_cliente, limpiar_campos_clientes
 from Usuarios import buscar_usuario, inhabilitar_usuario, crear_usuario, habilitar_usuario, actualizar_usuario, mostrar_usuarios, seleccionar_usuario, limpiar_campos_usuarios
@@ -17,7 +17,7 @@ def limpiar_ventana():
 
 def login_principal():
     limpiar_ventana()
-    window.title("Inicio Sesion")
+    window.title("Inicio Sesión")
 
     img = Image.open("img/inicio_log.png")
     img = img.resize((450, 400), Image.Resampling.LANCZOS)
@@ -31,7 +31,7 @@ def login_principal():
     y_inicial = 450
     incremento_x = 150
 
-    label_text = tk.Label(window, text="Inicio de Sesion", font=("Calibri", 25))
+    label_text = tk.Label(window, text="Inicio de Sesión", font=("Calibri", 25))
     label_text.place(x=x_centro, y=y_inicial, anchor="center")
 
     label_user = tk.Label(window, text="Usuario", font=("Arial", 12))
@@ -401,6 +401,9 @@ def admin_progreso_estudiantes():
 
     btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda:limpiar_progreso(entry_ID, entry_usuario, entry_curso, entry_nivel, entry_puntos))
     btn_limpiar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
+
+    btn_enviar = ttk.Button(window, width=20, text="Enviar al Correo", command=lambda: enviar_info_seleccionada(tree), bootstyle=LIGHT)
+    btn_enviar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
     btn_borrar = ttk.Button(window, text="Borrar todo el progreso", width=30, command=lambda: [confirm_borrar_progreso(tree), refrescar_treeview(tree)], bootstyle=WARNING) 
     btn_borrar.grid(row=6, column=0, columnspan=3, pady=(30, 30), sticky="n")
@@ -883,6 +886,9 @@ def ventana_progreso_estudiantes():
 
     btn_limpiar = ttk.Button(window, width=20, bootstyle=LIGHT, text="Limpiar", command=lambda:limpiar_progreso(entry_ID, entry_usuario, entry_curso, entry_nivel, entry_puntos))
     btn_limpiar.grid(row=4, column=2, padx=10, pady=10, sticky="w")
+
+    btn_enviar = ttk.Button(window, width=20, text="Enviar al Correo", command=lambda: enviar_info_seleccionada(tree), bootstyle=LIGHT)
+    btn_enviar.grid(row=5, column=2, padx=10, pady=10, sticky="w")
 
     btn_borrar = ttk.Button(window, text="Borrar todo el progreso", width=30, command=lambda: [confirm_borrar_progreso(tree), refrescar_treeview(tree)], bootstyle=WARNING) 
     btn_borrar.grid(row=6, column=0, columnspan=3, pady=(30, 30), sticky="n")

@@ -162,26 +162,26 @@ def pantalla_inicio(screen, screen_width, screen_height, id_estudiante):
     start_screen_image = pygame.transform.scale(start_screen_image, (screen_width, screen_height))
     screen.blit(start_screen_image, (0, 0))
 
-    font_start = pygame.font.Font("font/Eight-Bit Madness.ttf", 100)
-    font_text = pygame.font.Font("font/Eight-Bit Madness.ttf", 50)
+    font_start = pygame.font.Font("font/Eight-Bit Madness.ttf", 40)
+    font_text = pygame.font.Font("font/Eight-Bit Madness.ttf", 60)
 
-    text = font_start.render("START", True, (0, 0, 0))
-    screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 3 - text.get_height() // 2))
+    """text = font_start.render("START", True, (0, 0, 0))
+    screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 3 - text.get_height() // 2))"""
 
-    difficulty_text = font_text.render("Seleccionar Dificultad", True, (0, 0, 0))
-    screen.blit(difficulty_text, (screen_width // 2 - difficulty_text.get_width() // 2, screen_height // 2 - difficulty_text.get_height() // 2 - 50))
+    difficulty_text = font_text.render("Selecciona la Dificultad", True, (0, 0, 0))
+    screen.blit(difficulty_text, (screen_width // 2 - difficulty_text.get_width() // 2, screen_height // 2 - difficulty_text.get_height() // 2 - 80))
 
-    easy_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 20, 300, 50)
-    medium_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 80, 300, 50)
-    hard_button = pygame.Rect(screen_width // 2 - 150, screen_height // 2 + 140, 300, 50)
+    easy_button = pygame.Rect(screen_width // 2 - 100, screen_height // 2 + 20, 200, 40)
+    medium_button = pygame.Rect(screen_width // 2 - 100, screen_height // 2 + 80, 200, 40)
+    hard_button = pygame.Rect(screen_width // 2 - 100, screen_height // 2 + 140, 200, 40)
 
     pygame.draw.rect(screen, (0, 255, 0), easy_button)
     pygame.draw.rect(screen, (255, 255, 0), medium_button)
     pygame.draw.rect(screen, (255, 0, 0), hard_button)
 
-    easy_text = font_text.render("FACIL", True, (0, 0, 0))
-    medium_text = font_text.render("MEDIO", True, (0, 0, 0))
-    hard_text = font_text.render("DIFICIL", True, (0, 0, 0))
+    easy_text = font_start.render("FACIL", True, (0, 0, 0))
+    medium_text = font_start.render("MEDIO", True, (0, 0, 0))
+    hard_text = font_start.render("DIFICIL", True, (0, 0, 0))
 
     screen.blit(easy_text, (screen_width // 2 - easy_text.get_width() // 2, screen_height // 2 + 30))
     screen.blit(medium_text, (screen_width // 2 - medium_text.get_width() // 2, screen_height // 2 + 90))
@@ -202,11 +202,11 @@ def pantalla_inicio(screen, screen_width, screen_height, id_estudiante):
                     dificultad = "Facil"
                 elif medium_button.collidepoint(event.pos):
                     seleccionada = "medio"
-                    velocidad = 1.5
+                    velocidad = 1.3
                     dificultad = "Medio"
                 elif hard_button.collidepoint(event.pos):
                     seleccionada = "dificil"
-                    velocidad = 2
+                    velocidad = 1.5
                     dificultad = "Dificil"
 
     conexion = conectar_db()
@@ -503,11 +503,11 @@ def iniciar_juego(id_estudiante):
         character_y, is_jumping, jump_count = jump_pj(character_y, is_jumping, jump_count)
 
         distance += 1
-        if distance % 200 == 0:
+        if distance % 300 == 0:
             if not mostrar_pregunta(screen, respuesta_correcta_sound, respuesta_incorrecta_sound, id_estudiante, screen_width, screen_height):
                 game_over(screen, screen_width, screen_height, id_estudiante)
                 running = False
-            distance += 200
+            distance += 300
 
         mostrar_puntuacion(screen, score, nivel)
 
