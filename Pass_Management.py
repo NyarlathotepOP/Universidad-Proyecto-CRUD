@@ -46,3 +46,56 @@ def enviar_correo(destinatario, nombre_usuario, nombres, apellidos, contrasena):
             print("Correcto", f"Correo enviado a {destinatario}")
     except Exception as e:
         print("Error", f"Error al enviar el correo: {e}")
+
+def enviar_correo_progreso(destinatario, nombre_usuario, nombres, apellidos, progreso):
+    remitente = EMAIL_ENV
+    contraseña = EMAIL_PASS
+
+    mensaje = MIMEMultipart()
+    mensaje['From'] = remitente
+    mensaje['To'] = destinatario
+    mensaje['Subject'] = "Progreso Periodo Actual"
+
+    body = f"Hola {nombres} {apellidos},\n\nTu progreso es: {progreso}\n\nPor favor, comparte esta información con tus padres."
+    mensaje.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+            smtp.starttls()
+            smtp.login(remitente, contraseña)
+            smtp.sendmail(remitente, destinatario, mensaje.as_string())
+            print("Correcto", f"Correo enviado a {destinatario}")
+    except Exception as e:
+        print("Error", f"Error al enviar el correo: {e}")
+
+def enviar_info_seleccionada(tree):
+    try:
+        seleccion = tree.selection()
+        if not seleccion:
+            messagebox.showwarning("Advertencia", "Por favor, seleccione un estudiante en la tabla.")
+            return
+
+        datos = tree.item(seleccion[0], "values")
+        if len(datos) < 5:
+            messagebox.showerror("Error", "No se pudo obtener la información del estudiante.")
+            return
+        
+        id_estudiante, usuario, curso, nivel, puntos = datos
+
+        resultado = obtener_correo(usuario)
+        if resultado:
+            email, nombre_usuario, nombres, apellidos = resultado
+        else:
+            messagebox.showerror("Error", f"No se encontró un correo para el usuario {usuario}.")
+            return
+
+        enviar_correo_progreso(
+            destinatario=email,
+            nombre_usuario=nombre_usuario,
+            nombres=nombres,
+            apellidos=apellidos,
+            progreso=f"\n\nCurso: {curso}\nNivel: {nivel}\nPuntos: {puntos}"
+        )
+        messagebox.showinfo("Éxito", f"Información enviada al correo {email}")
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo enviar la información: {e}")
